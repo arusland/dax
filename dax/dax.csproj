@@ -58,6 +58,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Db\IDbProvider.cs" />
+    <Compile Include="Db\IQueryBlock.cs" />
+    <Compile Include="Db\ProviderFactory.cs" />
+    <Compile Include="Db\SqlServer\SqlServerProvider.cs" />
+    <Compile Include="Db\SqlServer\SqlServerQueryBlock.cs" />
     <Compile Include="Utils\VariableUtils.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

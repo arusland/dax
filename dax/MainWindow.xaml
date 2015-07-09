@@ -10,18 +10,22 @@
         </Grid.RowDefinitions>
         
         <ScrollViewer x:Name="scrollViewerMain" Grid.Row="0"  HorizontalScrollBarVisibility="Auto" x:FieldModifier="private">
-            <Grid x:Name="gridBlocks" VerticalAlignment="Top" x:FieldModifier="private" />
+            <Grid x:Name="gridBlocks" VerticalAlignment="Top" x:FieldModifier="private" >
+
+                <DataGrid x:Name="gridProducts" Margin="20" AutoGenerateColumns="True" Padding="10"></DataGrid>
+            </Grid>
         </ScrollViewer>
 
         <StackPanel Grid.Row="1" HorizontalAlignment="Left" Orientation="Horizontal">
-            <TextBox x:Name="textBoxProjectPath" Width="400" Height="21" Margin="5" VerticalAlignment="Top" IsReadOnly="True" x:FieldModifier="private" />
+            <TextBox x:Name="textBoxCurrentPage" Width="400" Height="21" Margin="5" VerticalAlignment="Top" IsReadOnly="True" x:FieldModifier="private" />
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0" Orientation="Horizontal">                    
-                    <Button x:Name="btnHello" Content="Search"></Button>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <Button x:Name="btnPrevPage" Content="Prev" Padding="5" Margin="5" Click="btnPrevPage_Click"></Button>
+                    <Button x:Name="btnNextPage" Content="Next"  Padding="5" Margin="5" Click="btnNextPage_Click"></Button>
                 </StackPanel>                
                 <StackPanel Grid.Row="1" Orientation="Horizontal">                    
                 </StackPanel>
