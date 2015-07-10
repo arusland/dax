@@ -12,6 +12,7 @@ namespace dax.Core.Document
         private readonly List<Property> _properties = new List<Property>();        
         private readonly List<Input> _inputs = new List<Input>();        
         private readonly List<Scope> _scopes = new List<Scope>();
+        private readonly FileInfo _currentFile;
         
         
         private DaxDocument(String file)
@@ -24,12 +25,21 @@ namespace dax.Core.Document
             }
 
             Load(fileInfo);
+            _currentFile = fileInfo;
         }
 
         public String Name
         {
             get;
             private set;
+        }
+
+        public String FilePath
+        {
+            get
+            {
+                return _currentFile.FullName;
+            }
         }
 
         public IEnumerable<Property> Properties

@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace dax.Db.SqlServer
 {
@@ -20,6 +14,11 @@ namespace dax.Db.SqlServer
         public IQueryBlock CreateBlock(String query)
         {
             return new SqlServerQueryBlock(query, _connectionString);
-        }        
+        }
+
+        public object ExecuteScalar(string query)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

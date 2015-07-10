@@ -58,6 +58,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\DaxManager.cs" />
+    <Compile Include="Core\IProviderFactory.cs" />
     <Compile Include="Db\IDbProvider.cs" />
     <Compile Include="Db\IQueryBlock.cs" />
     <Compile Include="Db\ProviderFactory.cs" />
