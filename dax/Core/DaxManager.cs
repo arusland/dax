@@ -1,16 +1,20 @@
-﻿using dax.Core.Document;
+﻿using dax.Document;
 using dax.Db;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using dax.Utils;
+using dax.Core.Events;
 
 namespace dax.Core
 {
     public class DaxManager
     {
-        private const String PROPERTY_QUERY_VERSION = "version.scanner";
+        private const String PROPERTY_QUERY_VERSION = "version.query";
         private readonly IProviderFactory _dbProviderFactory;
         private readonly DaxDocument _document;
+        public event EventHandler<QueryReloadedEventArgs> OnQueryReloaded;
+        public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
 
         public DaxManager(IProviderFactory dbProviderFactory, String filePath)
         {
@@ -31,13 +35,47 @@ namespace dax.Core
             }
         }
 
+        public String DocumentName
+        {
+            get
+            {
+                return _document.Name;
+            }
+        }
+
         public void Reload(Dictionary<String, String> inputValues)
         {
             IDbProvider dbProvider = _dbProviderFactory.Create();
             String version = GetVersion(dbProvider);
             Scope scope = GetScope(version);
+            Dictionary<Block, IQueryBlock> acceptedBlocks = new Dictionary<Block, IQueryBlock>();
+
+            QueryReloaded();
             
-            // TODO: !!!
+            foreach(Block block in scope.Blocks)
+            {
+                if (block.CanAccept(inputValues))
+                {
+                    String query = block.Query.BuildQuery(inputValues);
+                    acceptedBlocks.Add(block, dbProvider.CreateBlock(query));
+                }
+            }
+            
+            foreach (var item in acceptedBlocks)
+            {
+                item.Value.Update();
+                NewBlockAdded(item.Key, item.Value);
+            }
+        }
+
+        private void QueryReloaded()
+        {
+            OnQueryReloaded(this, new QueryReloadedEventArgs());
+        }
+
+        private void NewBlockAdded(Block block, IQueryBlock queryBlock)
+        {
+            OnNewBlockAdded(this, new NewBlockAddedEventArgs(block, queryBlock));
         }
 
         private Scope GetScope(String version)

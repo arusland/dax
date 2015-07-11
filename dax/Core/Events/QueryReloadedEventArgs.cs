@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace dax.Core
+namespace dax.Core.Events
 {
-    public class QueryReloadedEventArgs
+    public class QueryReloadedEventArgs : EventArgs
     {
     }
 }

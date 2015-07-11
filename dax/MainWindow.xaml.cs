@@ -1,46 +1,46 @@
 ﻿using dax.Document;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using dax.Gui;
 using System.Windows;
-using dax.Db.SqlServer;
+using System.Windows.Controls;
+using dax.Core;
 using dax.Db;
 
 namespace dax
 {
     public partial class MainWindow : Window
     {
-        private IQueryBlock block;
+        private readonly TabItem _addnewTabItem;
+
         public MainWindow()
         {
             InitializeComponent();
-            //DaxDocument doc = DaxDocument.Load(@"d:\WORK\MyProjects\dax\template.xml");
 
-            //Dictionary<string, object> map = new Dictionary<string, object>()
-            //{
-            //    {"ITEM_CODE", "xxx"}
-            //};
+            DaxManager daxManager = new DaxManager(ProviderFactory.Instance, @"d:\WORK\MyProjects\dax\template.xml");
 
-            //new SqlServerProvider().Exec(null);
+            var item  = new TabItem();
+            item.Header = daxManager.DocumentName;
+            var tabItemControl = new TabDocumentControl(daxManager);
+            item.Content = tabItemControl;
+            tabControlMain.Items.Add(item);
+            tabItemControl.ReloadDocument();
 
-            block = ProviderFactory.Instance.Create().CreateBlock("select * from sys.objects");
-            block.Update();
-            gridProducts.ItemsSource = block.Table.DefaultView;
-            textBoxCurrentPage.Text = (block.PageIndex + 1).ToString();
+            _addnewTabItem = new TabItem()
+            {
+                Header = "+"
+            };
+            tabControlMain.Items.Add(_addnewTabItem);
         }
 
-        private void btnNextPage_Click(object sender, RoutedEventArgs e)
+        private void tabControlMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            block.NextPage();
-            gridProducts.ItemsSource = block.Table.DefaultView;
-            textBoxCurrentPage.Text = (block.PageIndex + 1).ToString();
-        }
-
-        private void btnPrevPage_Click(object sender, RoutedEventArgs e)
-        {
-            block.PrevPage();
-            gridProducts.ItemsSource = block.Table.DefaultView;
-            textBoxCurrentPage.Text = (block.PageIndex + 1).ToString();
+            if (tabControlMain.SelectedItem == _addnewTabItem)
+            {
+                var item = new TabItem();
+                item.Header = "new Document";
+                item.Content = new TabDocumentControl(null);
+                tabControlMain.Items.Insert(tabControlMain.Items.Count - 1, item);
+                tabControlMain.SelectedItem = item;
+            }
         }
     }
 }

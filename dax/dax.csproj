@@ -59,6 +59,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\DaxManager.cs" />
+    <Compile Include="Core\Events\NewBlockAddedEventArgs.cs" />
     <Compile Include="Core\Events\QueryReloadedEventArgs.cs" />
     <Compile Include="Db\IProviderFactory.cs" />
     <Compile Include="Db\IDbProvider.cs" />
@@ -66,7 +67,28 @@
     <Compile Include="Db\ProviderFactory.cs" />
     <Compile Include="Db\SqlServer\SqlServerProvider.cs" />
     <Compile Include="Db\SqlServer\SqlServerQueryBlock.cs" />
+    <Compile Include="Gui\InputControl.xaml.cs">
+      <DependentUpon>InputControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\TabDocumentControl.xaml.cs">
+      <DependentUpon>TabDocumentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\TableControl.xaml.cs">
+      <DependentUpon>TableControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Utils\VariableUtils.cs" />
+    <Page Include="Gui\InputControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\TabDocumentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\TableControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -114,6 +136,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
