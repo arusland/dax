@@ -26,15 +26,20 @@
             x:Name="gridTable"
             Grid.Row="1"
             Margin="20,5,5,5"
-            AutoGenerateColumns="True" />
+            AutoGenerateColumns="True"
+            IsReadOnly="True"
+            CanUserAddRows="False"
+            CanUserDeleteRows="False"
+            CanUserReorderColumns="False" />
 
         <StackPanel
             Grid.Row="2"
             Orientation="Horizontal">
             <Button
                 x:Name="buttonPrev"
-                Margin="20,5,5,5"
-                Content="&lt;&lt;" Click="buttonPrev_Click" />
+                Margin="20,0,5,5"
+                Click="buttonPrev_Click"
+                Content="&lt;&lt;" />
             <TextBlock
                 x:Name="labelCurrentPage"
                 Margin="5"
@@ -42,8 +47,9 @@
                 Text="1" />
             <Button
                 x:Name="buttonNext"
-                Margin="5,5,5,5"
-                Content="&gt;&gt;" Click="buttonNext_Click" />
+                Margin="5,0,5,5"
+                Click="buttonNext_Click"
+                Content="&gt;&gt;" />
         </StackPanel>
     </Grid>
 </UserControl>

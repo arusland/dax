@@ -3,6 +3,7 @@ using dax.Core.Events;
 using System.Windows.Controls;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace dax.Gui
 {
@@ -34,6 +35,14 @@ namespace dax.Gui
             get
             {
                 return gridInputFields.Children.Cast<InputControl>();
+            }
+        }
+
+        public String DocumentTitle
+        {
+            get
+            {
+                return _daxManager.FilePath;
             }
         }
 
@@ -98,7 +107,9 @@ namespace dax.Gui
         private void DaxManager_OnNewBlockAdded(object sender, NewBlockAddedEventArgs e)
         {
             var tableitem = new TableControl(e.Block, e.QueryBlock);
+            gridBlocks.RowDefinitions.Add(new RowDefinition());
             gridBlocks.Children.Add(tableitem);
+            Grid.SetRow(tableitem, gridBlocks.RowDefinitions.Count - 1);
         }
 
         private void DaxManager_OnQueryReloaded(object sender, QueryReloadedEventArgs e)

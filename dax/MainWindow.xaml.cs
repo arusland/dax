@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using dax.Core;
 using dax.Db;
+using System;
 
 namespace dax
 {
@@ -40,6 +41,12 @@ namespace dax
                 item.Content = new TabDocumentControl(null);
                 tabControlMain.Items.Insert(tabControlMain.Items.Count - 1, item);
                 tabControlMain.SelectedItem = item;
+            }
+            else
+            {
+                var doc = ((TabItem)tabControlMain.SelectedItem).Content as TabDocumentControl;
+
+                this.Title = String.Format("DAx eXplorer - {0}", doc.DocumentTitle);
             }
         }
     }

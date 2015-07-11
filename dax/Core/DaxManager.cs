@@ -82,17 +82,6 @@ namespace dax.Core
         {
             if (String.IsNullOrEmpty(version))
             {
-                Scope scope = _document.Scopes.FirstOrDefault(p => p.Version == version);
-
-                if (scope == null)
-                {
-                    throw new InvalidOperationException(String.Format("Scope for version '{0}' not found", version));
-                }
-
-                return scope;
-            }
-            else
-            {
                 Scope scope = _document.Scopes.FirstOrDefault(p => String.IsNullOrEmpty(p.Version));
 
                 if (scope == null)
@@ -101,6 +90,17 @@ namespace dax.Core
                 }
 
                 return scope;
+            }
+            else
+            {
+                Scope scope = _document.Scopes.FirstOrDefault(p => p.Version == version);
+
+                if (scope == null)
+                {
+                    throw new InvalidOperationException(String.Format("Scope for version '{0}' not found", version));
+                }
+
+                return scope;                
             }
         }
 
