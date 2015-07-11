@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace dax.Core.Document
+namespace dax.Document
 {
     public class DaxDocument
     {
@@ -70,7 +70,7 @@ namespace dax.Core.Document
         private List<Scope> LoadScopes(XDocument doc)
         {
             var items = doc.GetNodes("project/scope")
-                .Select(p => new Scope(p.GetAttribute("version"), LoadBlocks(p)))
+                .Select(p => new Scope(p.GetSafeAttribute("version"), LoadBlocks(p)))
                 .ToList();
 
             return items;

@@ -27,7 +27,7 @@ namespace dax.Utils
             return result.Distinct().ToList();
         }
 
-        public static String BuildQuery(String content, List<String> variables, Dictionary<String, Object> map)
+        public static String BuildQuery(String content, List<String> variables, Dictionary<String, String> map)
         {
             var varNotFound = variables.FirstOrDefault(p => !map.ContainsKey(p));
 

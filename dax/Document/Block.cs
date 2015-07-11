@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace dax.Core.Document
+namespace dax.Document
 {
     public class Block
     {
@@ -31,6 +31,11 @@ namespace dax.Core.Document
         public List<String> Variables
         {
             get { return _variables; }
+        }
+
+        public bool CanAccept(Dictionary<String, String> inputValues)
+        {
+            return _variables.All(p => inputValues.ContainsKey(p));
         }
 
         private static List<string> GetVariables(string Title, Document.Query Query)

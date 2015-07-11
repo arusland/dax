@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace dax.Core.Document
+namespace dax.Document
 {
     public class Scope
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace dax.Core.Document
+namespace dax.Document
 {
     public class Query
     {
@@ -25,7 +25,7 @@ namespace dax.Core.Document
             get { return _variables; }
         }
 
-        public String BuildQuery(Dictionary<String, Object> map)
+        public String BuildQuery(Dictionary<String, String> map)
         {
             return VariableUtils.BuildQuery(Content, _variables, map);
         }        

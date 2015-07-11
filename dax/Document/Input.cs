@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace dax.Core.Document
+namespace dax.Document
 {
     public class Input
     {

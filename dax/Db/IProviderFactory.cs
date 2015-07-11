@@ -1,6 +1,6 @@
 ﻿using dax.Db;
 
-namespace dax.Core
+namespace dax.Db
 {
     public interface IProviderFactory
     {

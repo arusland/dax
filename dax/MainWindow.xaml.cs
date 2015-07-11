@@ -1,4 +1,4 @@
-﻿using dax.Core.Document;
+﻿using dax.Document;
 using System;
 using System.Collections.Generic;
 using System.Linq;

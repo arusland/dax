@@ -59,7 +59,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Core\DaxManager.cs" />
-    <Compile Include="Core\IProviderFactory.cs" />
+    <Compile Include="Core\Events\QueryReloadedEventArgs.cs" />
+    <Compile Include="Db\IProviderFactory.cs" />
     <Compile Include="Db\IDbProvider.cs" />
     <Compile Include="Db\IQueryBlock.cs" />
     <Compile Include="Db\ProviderFactory.cs" />
@@ -74,12 +75,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Core\Document\Query.cs" />
-    <Compile Include="Core\Document\DaxDocument.cs" />
-    <Compile Include="Core\Document\Input.cs" />
-    <Compile Include="Core\Document\Property.cs" />
-    <Compile Include="Core\Document\Block.cs" />
-    <Compile Include="Core\Document\Scope.cs" />
+    <Compile Include="Document\Query.cs" />
+    <Compile Include="Document\DaxDocument.cs" />
+    <Compile Include="Document\Input.cs" />
+    <Compile Include="Document\Property.cs" />
+    <Compile Include="Document\Block.cs" />
+    <Compile Include="Document\Scope.cs" />
     <Compile Include="Extensions\XDocumentExtensions.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
