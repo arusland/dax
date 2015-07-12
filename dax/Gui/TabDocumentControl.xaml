@@ -23,15 +23,28 @@
                 x:Name="gridInputFields"
                 Grid.Column="0" />
 
-            <Button
-                x:Name="buttonSearch"
+            <StackPanel
                 Grid.Column="1"
-                Width="80"
-                Margin="5"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Click="buttonSearch_Click"
-                Content="Search" />
+                Orientation="Vertical">
+
+                <Button
+                    x:Name="buttonClose"
+                    Width="80"
+                    Margin="5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Click="buttonClose_Click"
+                    Content="Close" />
+
+                <Button
+                    x:Name="buttonSearch"
+                    Width="80"
+                    Margin="5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Click="buttonSearch_Click"
+                    Content="Search" />
+            </StackPanel>
         </Grid>
 
         <ScrollViewer

@@ -14,23 +14,21 @@ namespace dax.Core
         private readonly IProviderFactory _dbProviderFactory;
         private DaxDocument _document;
         private readonly TaskScheduler _uiContext;
-        private readonly String _filePath;
         public event EventHandler<QueryReloadedEventArgs> OnQueryReloaded;
         public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
         public event EventHandler<ErrorEventArgs> OnError;
 
         public DaxManager(IProviderFactory dbProviderFactory, String filePath, TaskScheduler uiContext)
         {
-            _filePath = filePath;
             _dbProviderFactory = dbProviderFactory;
             _uiContext = uiContext;
+            _document = DaxDocument.Load(filePath);
         }        
 
         public IEnumerable<Input> Inputs
         {
             get 
             {
-                CheckLoadedDocument();
                 return _document.Inputs; 
             }
         }
@@ -39,7 +37,7 @@ namespace dax.Core
         {
             get
             {
-                return _filePath;
+                return _document.FilePath;
             }
         }
 
@@ -47,15 +45,12 @@ namespace dax.Core
         {
             get
             {
-                CheckLoadedDocument();
                 return _document.Name;
             }
         }
 
         public void Reload(Dictionary<String, String> inputValues)
         {
-            CheckLoadedDocument();
-
             try
             {
                 ReloadInternal(inputValues);
@@ -96,21 +91,6 @@ namespace dax.Core
             Task task = Task.Factory.StartNew(() => Reload(inputValues));
 
             await task;
-        }
-
-        private void CheckLoadedDocument()
-        {
-            if (_document == null)
-            {
-                try
-                {
-                    _document = DaxDocument.Load(_filePath);                    
-                }
-                catch (Exception ex)
-                {
-                    DoErrorEvent(ex.Message);
-                }
-            }
         }
 
         private void DoQueryReloadedEvent()

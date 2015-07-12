@@ -41,6 +41,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -69,9 +71,15 @@
     <Compile Include="Db\SqlServer\SqlServerProvider.cs" />
     <Compile Include="Db\SqlServer\SqlServerQueryBlock.cs" />
     <Compile Include="Extensions\XDocumentExtensions.cs" />
+    <Compile Include="Gui\AboutBox.xaml.cs">
+      <DependentUpon>AboutBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\INotificationView.cs" />
     <Compile Include="Gui\InputControl.xaml.cs">
       <DependentUpon>InputControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\StartUpPageControl.xaml.cs">
+      <DependentUpon>StartUpPageControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\TabDocumentControl.xaml.cs">
       <DependentUpon>TabDocumentControl.xaml</DependentUpon>
@@ -81,7 +89,15 @@
     </Compile>
     <Compile Include="Utils\VariableUtils.cs" />
     <Compile Include="Utils\VersionUtils.cs" />
+    <Page Include="Gui\AboutBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Gui\InputControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\StartUpPageControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

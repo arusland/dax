@@ -16,6 +16,7 @@ namespace dax.Gui
 
         private readonly DaxManager _daxManager;
         private readonly INotificationView _notificationView;
+        public event EventHandler<EventArgs> OnCloseDocument;
 
         public TabDocumentControl(DaxManager daxManager, INotificationView notificationView)
         {
@@ -134,6 +135,14 @@ namespace dax.Gui
         private void DaxManager_OnError(object sender, ErrorEventArgs e)
         {
             _notificationView.ShowError(e.Message);
+        }
+
+        private void buttonClose_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (OnCloseDocument != null)
+            {
+                OnCloseDocument(this, EventArgs.Empty);
+            }
         }
 
         #endregion
