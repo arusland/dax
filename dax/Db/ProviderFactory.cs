@@ -1,5 +1,6 @@
 ﻿using dax.Core;
 using dax.Db.SqlServer;
+using dax.Properties;
 
 namespace dax.Db
 {
@@ -13,7 +14,7 @@ namespace dax.Db
 
         public IDbProvider Create()
         {
-            return new SqlServerProvider("Data Source=(local);Initial Catalog=TestDb;Integrated Security=true");
+            return new SqlServerProvider(Settings.Default.ConnectionString);
         }
     }
 }
