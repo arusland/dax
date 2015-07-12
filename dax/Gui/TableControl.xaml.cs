@@ -1,6 +1,7 @@
 ﻿using dax.Db;
 using dax.Document;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace dax.Gui
@@ -35,14 +36,34 @@ namespace dax.Gui
 
         private void buttonPrev_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            _queryBlock.PrevPage();
-            RefreshPaging();
+            PrevPage();
         }
 
+        private async Task PrevPage()
+        {
+            EnableControls(false);
+            await _queryBlock.PrevPageAsync();
+            RefreshPaging();
+            EnableControls(true);
+        }
+
+        private void EnableControls(bool enable)
+        {
+            labelLoading.Visibility = enable ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible;
+            buttonNext.IsEnabled = enable;
+            buttonPrev.IsEnabled = enable;
+        }
         private void buttonNext_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            _queryBlock.NextPage();
-            RefreshPaging();            
+            NextPage();
+        }
+
+        private async Task NextPage()
+        {
+            EnableControls(false); 
+            await _queryBlock.NextPageAsync();
+            RefreshPaging();
+            EnableControls(true);
         }
 
         private void RefreshPaging()

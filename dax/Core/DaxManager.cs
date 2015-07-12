@@ -1,10 +1,10 @@
-﻿using dax.Document;
+﻿using dax.Core.Events;
 using dax.Db;
+using dax.Document;
 using System;
-using System.Linq;
 using System.Collections.Generic;
-using dax.Utils;
-using dax.Core.Events;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace dax.Core
 {
@@ -13,13 +13,15 @@ namespace dax.Core
         private const String PROPERTY_QUERY_VERSION = "version.query";
         private readonly IProviderFactory _dbProviderFactory;
         private readonly DaxDocument _document;
+        private TaskScheduler _uiContext;
         public event EventHandler<QueryReloadedEventArgs> OnQueryReloaded;
         public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
 
-        public DaxManager(IProviderFactory dbProviderFactory, String filePath)
+        public DaxManager(IProviderFactory dbProviderFactory, String filePath, TaskScheduler uiContext)
         {
             _dbProviderFactory = dbProviderFactory;
             _document = DaxDocument.Load(filePath);
+            _uiContext = uiContext;
         }        
 
         public IEnumerable<Input> Inputs
@@ -50,7 +52,7 @@ namespace dax.Core
             Scope scope = GetScope(version);
             Dictionary<Block, IQueryBlock> acceptedBlocks = new Dictionary<Block, IQueryBlock>();
 
-            QueryReloaded();
+            RunOnUIContext(QueryReloaded);
             
             foreach(Block block in scope.Blocks)
             {
@@ -64,8 +66,15 @@ namespace dax.Core
             foreach (var item in acceptedBlocks)
             {
                 item.Value.Update();
-                NewBlockAdded(item.Key, item.Value);
+                RunOnUIContext(() => NewBlockAdded(item.Key, item.Value));
             }
+        }
+
+        public async Task ReloadAsync(Dictionary<String, String> inputValues)
+        {
+            Task task = Task.Factory.StartNew(() => Reload(inputValues));
+
+            await task;
         }
 
         private void QueryReloaded()
@@ -122,6 +131,15 @@ namespace dax.Core
             }
 
             return prop;
+        }
+
+        private void RunOnUIContext(Action action)
+        {
+            var token = Task.Factory.CancellationToken;
+            Task.Factory.StartNew(() =>
+            {
+                action();
+            }, token, TaskCreationOptions.None, _uiContext);
         }
     }
 }

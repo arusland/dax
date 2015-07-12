@@ -1,14 +1,14 @@
-﻿using dax.Document;
+﻿using dax.Core;
+using dax.Db;
 using dax.Gui;
+using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using dax.Core;
-using dax.Db;
-using System;
 
 namespace dax
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotificationView
     {
         private readonly TabItem _addnewTabItem;
 
@@ -16,11 +16,12 @@ namespace dax
         {
             InitializeComponent();
 
-            DaxManager daxManager = new DaxManager(ProviderFactory.Instance, @"d:\WORK\MyProjects\dax\template.xml");
+            DaxManager daxManager = new DaxManager(ProviderFactory.Instance, @"d:\WORK\MyProjects\dax\template.xml", 
+                TaskScheduler.FromCurrentSynchronizationContext());
 
             var item  = new TabItem();
             item.Header = daxManager.DocumentName;
-            var tabItemControl = new TabDocumentControl(daxManager);
+            var tabItemControl = new TabDocumentControl(daxManager, this);
             item.Content = tabItemControl;
             tabControlMain.Items.Add(item);
             tabItemControl.ReloadDocument();
@@ -38,7 +39,7 @@ namespace dax
             {
                 var item = new TabItem();
                 item.Header = "new Document";
-                item.Content = new TabDocumentControl(null);
+                item.Content = new TabDocumentControl(null, this);
                 tabControlMain.Items.Insert(tabControlMain.Items.Count - 1, item);
                 tabControlMain.SelectedItem = item;
             }
@@ -48,6 +49,11 @@ namespace dax
 
                 this.Title = String.Format("DAx eXplorer - {0}", doc.DocumentTitle);
             }
+        }
+
+        public void SetStatus(string text)
+        {
+            statusLabel.Content = text;
         }
     }
 }

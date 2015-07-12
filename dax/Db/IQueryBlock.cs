@@ -29,5 +29,9 @@ namespace dax.Db
         void NextPage();
 
         void PrevPage();
+
+        Task NextPageAsync();
+
+        Task PrevPageAsync();
     }
 }

@@ -67,6 +67,8 @@
     <Compile Include="Db\ProviderFactory.cs" />
     <Compile Include="Db\SqlServer\SqlServerProvider.cs" />
     <Compile Include="Db\SqlServer\SqlServerQueryBlock.cs" />
+    <Compile Include="Extensions\XDocumentExtensions.cs" />
+    <Compile Include="Gui\INotificationView.cs" />
     <Compile Include="Gui\InputControl.xaml.cs">
       <DependentUpon>InputControl.xaml</DependentUpon>
     </Compile>
@@ -103,7 +105,6 @@
     <Compile Include="Document\Property.cs" />
     <Compile Include="Document\Block.cs" />
     <Compile Include="Document\Scope.cs" />
-    <Compile Include="Extensions\XDocumentExtensions.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

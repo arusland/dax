@@ -1,9 +1,9 @@
 ﻿using dax.Core;
 using dax.Core.Events;
-using System.Windows.Controls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using System.Windows.Controls;
 
 namespace dax.Gui
 {
@@ -15,11 +15,13 @@ namespace dax.Gui
         private const int INPUT_ROWS_COUNT = 5;
 
         private readonly DaxManager _daxManager;
+        private readonly INotificationView _notificationView;
 
-        public TabDocumentControl(DaxManager daxManager)
+        public TabDocumentControl(DaxManager daxManager, INotificationView notificationView)
         {
             InitializeComponent();
             _daxManager = daxManager;
+            _notificationView = notificationView;
             _daxManager.OnQueryReloaded += DaxManager_OnQueryReloaded;
             _daxManager.OnNewBlockAdded += DaxManager_OnNewBlockAdded;
             InitGrids();
@@ -99,8 +101,19 @@ namespace dax.Gui
 
             if (inputs.Count > 0)
             {
+                _notificationView.SetStatus("Loading...");
+                buttonSearch.IsEnabled = false;
                 var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
-                _daxManager.Reload(inputValues);
+                var task = _daxManager.ReloadAsync(inputValues);
+                task.GetAwaiter().OnCompleted(() =>  
+                {
+                    _notificationView.SetStatus(String.Empty);
+                    buttonSearch.IsEnabled = true;
+                });
+            }
+            else
+            {
+                _notificationView.SetStatus("Nothing to search!");
             }
         }
 

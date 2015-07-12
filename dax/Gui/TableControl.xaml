@@ -27,10 +27,19 @@
             Grid.Row="1"
             Margin="20,5,5,5"
             AutoGenerateColumns="True"
-            IsReadOnly="True"
             CanUserAddRows="False"
             CanUserDeleteRows="False"
-            CanUserReorderColumns="False" />
+            CanUserReorderColumns="False"
+            IsReadOnly="True" />
+
+        <TextBlock
+            x:Name="labelLoading"
+            Grid.Row="1"
+            Margin="20,5,5,5"
+            Background="#99CCCCCC"
+            FontSize="25"
+            Text=" Loading..."
+            Visibility="Collapsed" />
 
         <StackPanel
             Grid.Row="2"

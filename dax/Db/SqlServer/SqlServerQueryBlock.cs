@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace dax.Db.SqlServer
 {
@@ -43,10 +44,23 @@ namespace dax.Db.SqlServer
             UpdateInternal();
         }
 
+        public async Task NextPageAsync()
+        {
+            Task task = Task.Factory.StartNew(NextPage);
+            await task;
+        }
+
         public void PrevPage()
         {
             PageIndex = Math.Max(0, PageIndex - 1);
             UpdateInternal();
+        }
+
+
+        public async Task PrevPageAsync()
+        {
+            Task task = Task.Factory.StartNew(PrevPage);
+            await task;
         }
 
         private void UpdateInternal()
