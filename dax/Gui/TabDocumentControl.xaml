@@ -43,7 +43,7 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Click="buttonSearch_Click"
-                    Content="Search" />
+                    Content="Search" FontWeight="Bold" />
             </StackPanel>
         </Grid>
 

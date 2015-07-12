@@ -77,6 +77,9 @@
     <Compile Include="Gui\AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\BackgroundControl.xaml.cs">
+      <DependentUpon>BackgroundControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\INotificationView.cs" />
     <Compile Include="Gui\InputControl.xaml.cs">
       <DependentUpon>InputControl.xaml</DependentUpon>
@@ -93,6 +96,10 @@
     <Compile Include="Utils\VariableUtils.cs" />
     <Compile Include="Utils\VersionUtils.cs" />
     <Page Include="Gui\AboutBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\BackgroundControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -160,6 +167,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\dax.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\background.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

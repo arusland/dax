@@ -16,9 +16,9 @@ namespace dax.Gui
             Close();
         }
 
-        public static void Show()
+        public static void Show(Window owner)
         {
-            new AboutBox().ShowDialog();
+            new AboutBox() { Owner = owner }.ShowDialog();
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

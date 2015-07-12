@@ -14,7 +14,7 @@ namespace dax
 {
     public partial class MainWindow : Window, INotificationView
     {
-        private const String TITLE_TEMPLATE_WITH_DOCUMENT = "DAta eXplorer - {0} - ver{1}";
+        private const String TITLE_TEMPLATE_WITH_DOCUMENT = "DAta eXplorer - [{0}] - ver{1}";
         private const String TITLE_TEMPLATE = "DAta eXplorer - ver{0}";
         private readonly TabItem _addnewTabItem;
         private readonly TabItem _aboutTabItem;
@@ -27,10 +27,12 @@ namespace dax
             _startUpTabItem = new TabItem() { Header = "Home", Content = new StartUpPageControl() };
             tabControlMain.Items.Add(_startUpTabItem);
             _addnewTabItem = new TabItem() { Header = "+" };
+            _addnewTabItem.Content = new BackgroundControl();
             _addnewTabItem.MouseUp += TextBlockNewtab_MouseUp;
             tabControlMain.Items.Add(_addnewTabItem);
             _aboutTabItem = new TabItem() { Header = "About" };
             _aboutTabItem.MouseUp += TextBlockAbout_MouseUp;
+            _aboutTabItem.Content = new BackgroundControl();
             tabControlMain.Items.Add(_aboutTabItem);
         }
 
@@ -155,7 +157,7 @@ namespace dax
 
         private void TextBlockAbout_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            AboutBox.Show();
+            AboutBox.Show(this);
             SelectFirstDocument();
         }
 
