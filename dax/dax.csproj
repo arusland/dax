@@ -80,6 +80,9 @@
     <Compile Include="Gui\BackgroundControl.xaml.cs">
       <DependentUpon>BackgroundControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\ConnectionsEditDialog.xaml.cs">
+      <DependentUpon>ConnectionsEditDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\INotificationView.cs" />
     <Compile Include="Gui\InputControl.xaml.cs">
       <DependentUpon>InputControl.xaml</DependentUpon>
@@ -100,6 +103,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\BackgroundControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\ConnectionsEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
