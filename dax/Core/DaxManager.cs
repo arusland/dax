@@ -12,28 +12,34 @@ namespace dax.Core
     {
         private const String PROPERTY_QUERY_VERSION = "version.query";
         private readonly IProviderFactory _dbProviderFactory;
-        private readonly DaxDocument _document;
-        private TaskScheduler _uiContext;
+        private DaxDocument _document;
+        private readonly TaskScheduler _uiContext;
+        private readonly String _filePath;
         public event EventHandler<QueryReloadedEventArgs> OnQueryReloaded;
         public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
+        public event EventHandler<ErrorEventArgs> OnError;
 
         public DaxManager(IProviderFactory dbProviderFactory, String filePath, TaskScheduler uiContext)
         {
+            _filePath = filePath;
             _dbProviderFactory = dbProviderFactory;
-            _document = DaxDocument.Load(filePath);
             _uiContext = uiContext;
         }        
 
         public IEnumerable<Input> Inputs
         {
-            get { return _document.Inputs; }
+            get 
+            {
+                CheckLoadedDocument();
+                return _document.Inputs; 
+            }
         }
 
         public String FilePath
         {
             get
             {
-                return _document.FilePath;
+                return _filePath;
             }
         }
 
@@ -41,19 +47,34 @@ namespace dax.Core
         {
             get
             {
+                CheckLoadedDocument();
                 return _document.Name;
             }
         }
 
         public void Reload(Dictionary<String, String> inputValues)
         {
+            CheckLoadedDocument();
+
+            try
+            {
+                ReloadInternal(inputValues);
+            }
+            catch (System.Exception ex)
+            {
+                DoErrorEvent(ex.Message);
+            }
+        }
+
+        public void ReloadInternal(Dictionary<String, String> inputValues)
+        {
+            DoQueryReloadedEvent();
+
             IDbProvider dbProvider = _dbProviderFactory.Create();
             String version = GetVersion(dbProvider);
             Scope scope = GetScope(version);
             Dictionary<Block, IQueryBlock> acceptedBlocks = new Dictionary<Block, IQueryBlock>();
 
-            RunOnUIContext(QueryReloaded);
-            
             foreach(Block block in scope.Blocks)
             {
                 if (block.CanAccept(inputValues))
@@ -66,7 +87,7 @@ namespace dax.Core
             foreach (var item in acceptedBlocks)
             {
                 item.Value.Update();
-                RunOnUIContext(() => NewBlockAdded(item.Key, item.Value));
+                DoNewBlockAddedEvent(item.Key, item.Value);           
             }
         }
 
@@ -77,14 +98,34 @@ namespace dax.Core
             await task;
         }
 
-        private void QueryReloaded()
+        private void CheckLoadedDocument()
         {
-            OnQueryReloaded(this, new QueryReloadedEventArgs());
+            if (_document == null)
+            {
+                try
+                {
+                    _document = DaxDocument.Load(_filePath);                    
+                }
+                catch (Exception ex)
+                {
+                    DoErrorEvent(ex.Message);
+                }
+            }
         }
 
-        private void NewBlockAdded(Block block, IQueryBlock queryBlock)
+        private void DoQueryReloadedEvent()
         {
-            OnNewBlockAdded(this, new NewBlockAddedEventArgs(block, queryBlock));
+            RunOnUIContext(() => OnQueryReloaded(this, new QueryReloadedEventArgs()));
+        }
+
+        private void DoNewBlockAddedEvent(Block block, IQueryBlock queryBlock)
+        {
+            RunOnUIContext(() => OnNewBlockAdded(this, new NewBlockAddedEventArgs(block, queryBlock)));
+        }
+
+        private void DoErrorEvent(String message)
+        {
+            RunOnUIContext(() => OnError(this, new ErrorEventArgs(message)));
         }
 
         private Scope GetScope(String version)

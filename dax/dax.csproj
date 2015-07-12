@@ -60,6 +60,7 @@
     </ApplicationDefinition>
     <Compile Include="Core\DaxManager.cs" />
     <Compile Include="Core\Events\NewBlockAddedEventArgs.cs" />
+    <Compile Include="Core\Events\ErrorEventArgs.cs" />
     <Compile Include="Core\Events\QueryReloadedEventArgs.cs" />
     <Compile Include="Db\IProviderFactory.cs" />
     <Compile Include="Db\IDbProvider.cs" />
@@ -79,6 +80,7 @@
       <DependentUpon>TableControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils\VariableUtils.cs" />
+    <Compile Include="Utils\VersionUtils.cs" />
     <Page Include="Gui\InputControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

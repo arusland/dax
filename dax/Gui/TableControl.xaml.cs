@@ -10,13 +10,15 @@ namespace dax.Gui
     {
         private readonly IQueryBlock _queryBlock;
         private readonly Block _block;
+        private readonly INotificationView _notificationView;
 
-        public TableControl(Block block, IQueryBlock queryBlock)
+        public TableControl(Block block, IQueryBlock queryBlock, INotificationView notificationView)
         {
             InitializeComponent();
 
             _block = block;
             _queryBlock = queryBlock;
+            _notificationView = notificationView;
             Title = block.Title;
             RefreshPaging();
         }
@@ -34,34 +36,36 @@ namespace dax.Gui
             }
         }
 
-        private void buttonPrev_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            PrevPage();
-        }
-
-        private async Task PrevPage()
-        {
-            EnableControls(false);
-            await _queryBlock.PrevPageAsync();
-            RefreshPaging();
-            EnableControls(true);
-        }
-
         private void EnableControls(bool enable)
         {
             labelLoading.Visibility = enable ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible;
             buttonNext.IsEnabled = enable;
             buttonPrev.IsEnabled = enable;
         }
-        private void buttonNext_Click(object sender, System.Windows.RoutedEventArgs e)
+
+        private void NextPage()
         {
-            NextPage();
+            EnableControls(false);
+            Task task = _queryBlock.NextPageAsync();
+
+            task.GetAwaiter().OnCompleted(() => OnOperationComplete(task));
         }
 
-        private async Task NextPage()
+        private void PrevPage()
         {
-            EnableControls(false); 
-            await _queryBlock.NextPageAsync();
+            EnableControls(false);
+            Task task = _queryBlock.PrevPageAsync();
+
+            task.GetAwaiter().OnCompleted(() => OnOperationComplete(task));
+        }
+
+        private void OnOperationComplete(Task task)
+        {
+            if (task.Exception != null)
+            {
+                _notificationView.ShowError(task.Exception.GetBaseException().Message);
+            }
+
             RefreshPaging();
             EnableControls(true);
         }
@@ -71,5 +75,20 @@ namespace dax.Gui
             gridTable.ItemsSource = _queryBlock.Table.DefaultView;
             labelCurrentPage.Text = (_queryBlock.PageIndex + 1).ToString();
         }
+
+        #region Event Handlers
+
+        private void buttonPrev_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            PrevPage();
+        }
+
+
+        private void buttonNext_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            NextPage();
+        }
+
+        #endregion
     }
 }

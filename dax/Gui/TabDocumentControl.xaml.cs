@@ -24,8 +24,9 @@ namespace dax.Gui
             _notificationView = notificationView;
             _daxManager.OnQueryReloaded += DaxManager_OnQueryReloaded;
             _daxManager.OnNewBlockAdded += DaxManager_OnNewBlockAdded;
+            _daxManager.OnError += DaxManager_OnError;
             InitGrids();
-        }
+        }        
 
         public DaxManager Manager
         {
@@ -119,7 +120,7 @@ namespace dax.Gui
 
         private void DaxManager_OnNewBlockAdded(object sender, NewBlockAddedEventArgs e)
         {
-            var tableitem = new TableControl(e.Block, e.QueryBlock);
+            var tableitem = new TableControl(e.Block, e.QueryBlock, _notificationView);
             gridBlocks.RowDefinitions.Add(new RowDefinition());
             gridBlocks.Children.Add(tableitem);
             Grid.SetRow(tableitem, gridBlocks.RowDefinitions.Count - 1);
@@ -128,6 +129,11 @@ namespace dax.Gui
         private void DaxManager_OnQueryReloaded(object sender, QueryReloadedEventArgs e)
         {
             InitContentGrid();
+        }
+
+        private void DaxManager_OnError(object sender, ErrorEventArgs e)
+        {
+            _notificationView.ShowError(e.Message);
         }
 
         #endregion
