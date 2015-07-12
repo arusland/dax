@@ -34,7 +34,7 @@ namespace dax.Gui
             get { return _daxManager; }
         }
 
-        public IEnumerable<InputControl> SelectedInputControls
+        public IEnumerable<InputControl> InputControls
         {
             get
             {
@@ -99,7 +99,9 @@ namespace dax.Gui
 
         private void buttonSearch_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var inputs = SelectedInputControls.Where(p => p.IsSelected).ToList();
+            var inputs = InputControls.Where(p => p.IsSelected)
+                .Where(p => p.Context.AllowBlank || !String.IsNullOrEmpty(p.InputValue))
+                .ToList();
 
             if (inputs.Count > 0)
             {

@@ -1,0 +1,26 @@
+<project name="System db">
+	<props>
+		<prop name="version.query" value="select 'x.x'"/>
+	</props>
+
+	<input>
+		<field name="OBJECT_NAME" title="Object name" allowBlank="false"/>
+		<field name="VIEW_NAME" title="View name"/>
+	</input>
+
+	<scope version="x.x">
+		<block title="Sys objects">
+			<query>
+				select * from sys.objects where name like '%{{OBJECT_NAME}}%'
+			</query>
+		</block>
+
+		<block title="All views">
+			<query>
+				select * from sys.all_views
+				where name like '%{{VIEW_NAME}}%'
+			</query>
+		</block>	
+	</scope>
+</project>
+    

@@ -52,6 +52,14 @@ namespace dax.Gui
             }
         }
 
+        public Input Context
+        {
+            get
+            {
+                return _input;
+            }
+        }
+
         private void checkBoxEnabled_CheckedChanged(object sender, System.Windows.RoutedEventArgs e)
         {
             RefreshView();

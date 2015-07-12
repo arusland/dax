@@ -4,12 +4,12 @@ namespace dax.Document
 {
     public class Input
     {
-        public Input(String name, String title, String type, String bind)
+        public Input(String name, String title, String type, bool allowBlank)
         {
             Name = name;
             Title = title;
             Type = type;
-            Bind = bind;
+            AllowBlank = allowBlank;
         }
         
         public String Name
@@ -30,7 +30,7 @@ namespace dax.Document
             private set;
         }
 
-        public String Bind
+        public bool AllowBlank
         {
             get;
             private set;
@@ -38,7 +38,7 @@ namespace dax.Document
 
         public override String ToString()
         {
-            return String.Format("Name={0}; Title={1}; Type={2}; Bind={3}", Name, Title, Type, Bind);
+            return String.Format("Name={0}; Title={1}; Type={2}; AllowBlank={3}", Name, Title, Type, AllowBlank);
         }
     }
 }
