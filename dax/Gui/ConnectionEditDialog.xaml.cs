@@ -14,9 +14,12 @@ using System.Windows.Shapes;
 
 namespace dax.Gui
 {
-    public partial class ConnectionsEditDialog : Window
+    /// <summary>
+    /// Interaction logic for ConnectionEditDialog.xaml
+    /// </summary>
+    public partial class ConnectionEditDialog : Window
     {
-        public ConnectionsEditDialog()
+        public ConnectionEditDialog()
         {
             InitializeComponent();
         }

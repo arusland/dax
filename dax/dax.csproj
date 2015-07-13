@@ -67,6 +67,8 @@
     <Compile Include="Core\Events\NewBlockAddedEventArgs.cs" />
     <Compile Include="Core\Events\ErrorEventArgs.cs" />
     <Compile Include="Core\Events\QueryReloadedEventArgs.cs" />
+    <Compile Include="Db\Connect\IConnection.cs" />
+    <Compile Include="Db\Connect\IConnectionRepository.cs" />
     <Compile Include="Db\IProviderFactory.cs" />
     <Compile Include="Db\IDbProvider.cs" />
     <Compile Include="Db\IQueryBlock.cs" />
@@ -79,6 +81,9 @@
     </Compile>
     <Compile Include="Gui\BackgroundControl.xaml.cs">
       <DependentUpon>BackgroundControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\ConnectionEditDialog.xaml.cs">
+      <DependentUpon>ConnectionEditDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\ConnectionsEditDialog.xaml.cs">
       <DependentUpon>ConnectionsEditDialog.xaml</DependentUpon>
@@ -103,6 +108,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\BackgroundControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\ConnectionEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
