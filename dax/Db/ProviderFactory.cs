@@ -1,11 +1,12 @@
-﻿using dax.Core;
-using dax.Db.Connect;
+﻿using dax.Db.Connect;
 using dax.Db.SqlServer;
 using dax.Properties;
+using System;
+using System.Data.SqlClient;
 
 namespace dax.Db
 {
-    public sealed class ProviderFactory : IProviderFactory
+    public sealed class ProviderFactory : IProviderFactory, IConnectionStringParser
     {
         public static readonly ProviderFactory Instance = new ProviderFactory();
 
@@ -18,9 +19,16 @@ namespace dax.Db
             return new SqlServerProvider(Settings.Default.ConnectionString);
         }
 
-        public IConnection NewConnection(string serverName, string dbName, string login, string password)
+        public IConnection NewConnection(String serverName, String dbName, String login, String password)
         {
-            throw new System.NotImplementedException();
+            return new SqlServerConnection(serverName, dbName, login, password);
+        }        
+
+        IConnection IConnectionStringParser.Parse(string connectionString)
+        {
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(connectionString);
+
+            return NewConnection(builder.DataSource, builder.InitialCatalog, builder.UserID, builder.Password);
         }
     }
 }

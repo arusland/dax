@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using System;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace dax.Db.Connect
 {
@@ -21,6 +21,12 @@ namespace dax.Db.Connect
         }
 
         String Password
+        {
+            get;
+        }
+
+
+        String ConnectionString
         {
             get;
         }

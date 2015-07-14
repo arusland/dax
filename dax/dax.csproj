@@ -67,12 +67,15 @@
     <Compile Include="Core\Events\NewBlockAddedEventArgs.cs" />
     <Compile Include="Core\Events\ErrorEventArgs.cs" />
     <Compile Include="Core\Events\QueryReloadedEventArgs.cs" />
+    <Compile Include="Db\Connect\ConnectionRepository.cs" />
     <Compile Include="Db\Connect\IConnection.cs" />
     <Compile Include="Db\Connect\IConnectionRepository.cs" />
+    <Compile Include="Db\Connect\IConnectionStringParser.cs" />
     <Compile Include="Db\IProviderFactory.cs" />
     <Compile Include="Db\IDbProvider.cs" />
     <Compile Include="Db\IQueryBlock.cs" />
     <Compile Include="Db\ProviderFactory.cs" />
+    <Compile Include="Db\SqlServer\SqlServerConnection.cs" />
     <Compile Include="Db\SqlServer\SqlServerProvider.cs" />
     <Compile Include="Db\SqlServer\SqlServerQueryBlock.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
