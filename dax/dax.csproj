@@ -75,6 +75,7 @@
     <Compile Include="Db\ProviderFactory.cs" />
     <Compile Include="Db\SqlServer\SqlServerProvider.cs" />
     <Compile Include="Db\SqlServer\SqlServerQueryBlock.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\XDocumentExtensions.cs" />
     <Compile Include="Gui\AboutBox.xaml.cs">
       <DependentUpon>AboutBox.xaml</DependentUpon>

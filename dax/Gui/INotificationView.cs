@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 
 namespace dax.Gui
 {
@@ -7,5 +8,11 @@ namespace dax.Gui
         void SetStatus(String text);
 
         void ShowError(String message);
+
+        void ShowWarning(String message);
+
+        void ShowMessage(String message);
+
+        MessageBoxResult ShowQuestion(String message, MessageBoxButton buttons);
     }
 }

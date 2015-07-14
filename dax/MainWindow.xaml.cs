@@ -16,6 +16,7 @@ namespace dax
     {
         private const String TITLE_TEMPLATE_WITH_DOCUMENT = "DAta eXplorer - [{0}] - ver{1}";
         private const String TITLE_TEMPLATE = "DAta eXplorer - ver{0}";
+        private const String TITLE_MESSAGE_BOX = "Data Explorer";
         private readonly TabItem _addnewTabItem;
         private readonly TabItem _aboutTabItem;
         private readonly TabItem _startUpTabItem;
@@ -90,16 +91,6 @@ namespace dax
             }
         }
 
-        public void SetStatus(string text)
-        {
-            statusLabel.Content = text;
-        }
-
-        public void ShowError(string message)
-        {
-            MessageBox.Show(message, "DAX Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
         private void SelectFirstDocument()
         {
             var currentTab = CurrentDocumentTabItems.FirstOrDefault();
@@ -130,6 +121,35 @@ namespace dax
                 }
             }
         }
+
+        #region INotificationView interface
+        
+        public void SetStatus(string text)
+        {
+            statusLabel.Content = text;
+        }
+
+        public void ShowWarning(string message)
+        {
+            MessageBox.Show(message, TITLE_MESSAGE_BOX, MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+
+        public void ShowMessage(string message)
+        {
+            MessageBox.Show(message, TITLE_MESSAGE_BOX, MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public MessageBoxResult ShowQuestion(string message, MessageBoxButton buttons)
+        {
+            return MessageBox.Show(message, TITLE_MESSAGE_BOX, buttons, MessageBoxImage.Question);
+        }
+
+        public void ShowError(string message)
+        {
+            MessageBox.Show(message, TITLE_MESSAGE_BOX, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        #endregion        
 
         #region Event Handlers
 
@@ -164,6 +184,7 @@ namespace dax
         private void TextBlockNewtab_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
+
             if (openFileDialog.ShowDialog() == true)
             {
                 OpenDocument(openFileDialog.FileName);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Threading.Tasks;
+using System;
 
 namespace dax.Db.Connect
 {
@@ -23,5 +24,7 @@ namespace dax.Db.Connect
         {
             get;
         }
+
+        Task<String> Test();
     }
 }

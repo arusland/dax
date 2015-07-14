@@ -29,16 +29,19 @@
                 x:Name="buttonAdd"
                 Height="25"
                 Margin="5,3,5,3"
+                Click="buttonAdd_Click"
                 Content="Add" />
             <Button
                 x:Name="buttonEdit"
                 Height="25"
                 Margin="5,3,5,3"
+                Click="buttonEdit_Click"
                 Content="Edit" />
             <Button
                 x:Name="buttonDelete"
                 Height="25"
                 Margin="5,3,5,3"
+                Click="buttonDelete_Click"
                 Content="Delete" />
         </StackPanel>
     </Grid>

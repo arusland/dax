@@ -13,7 +13,5 @@ namespace dax.Db.Connect
         void Add(IConnection connection);
 
         void Remove(IConnection connection);
-
-        IConnection New(String serverName, String dbName, String login, String password);
     }
 }

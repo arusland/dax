@@ -16,6 +16,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock
@@ -72,6 +73,28 @@
             Width="150"
             Margin="5,5,5,5" />
 
-        <StackPanel Orientation="Horizontal" />
+        <StackPanel
+            Grid.ColumnSpan="2"
+            Grid.Row="4"
+            Orientation="Horizontal">
+            <Button
+                x:Name="buttonTest"
+                Width="65"
+                Margin="5"
+                Click="buttonTest_Click"
+                Content="Test" />
+            <Button
+                x:Name="buttonSave"
+                Width="65"
+                Margin="15,5,0,5"
+                Click="buttonSave_Click"
+                Content="Save" />
+            <Button
+                x:Name="buttonCancel"
+                Width="65"
+                Margin="5,5,5,5"
+                Click="buttonCancel_Click"
+                Content="Cancel" />
+        </StackPanel>
     </Grid>
 </Window>
