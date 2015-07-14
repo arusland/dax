@@ -12,18 +12,20 @@ namespace dax.Gui
         private readonly IConnectionRepository _connectionRepository;
         private readonly INotificationView _notificationView;
 
-        public ConnectionsEditDialog(IProviderFactory providerFactory, IConnectionRepository connectionRepository, INotificationView notificationView)
+        public ConnectionsEditDialog(IProviderFactory providerFactory, IConnectionRepository connectionRepository,
+            INotificationView notificationView, Window owner)
         {
             InitializeComponent();
             _providerFactory = providerFactory;
             _connectionRepository = connectionRepository;
             _notificationView = notificationView;
+            Owner = owner;           
         }
 
-        protected override void OnActivated(EventArgs e)
+        public IConnection SelectedConnection
         {
-            base.OnActivated(e);
-            ReloadConnections();
+            get;
+            private set;
         }
 
         private void ReloadConnections()
@@ -35,9 +37,21 @@ namespace dax.Gui
             }
         }
 
+        private void TrySelectConnection()
+        {
+            SelectedConnection = null;
+            var selectedConnection = listConnections.SelectedItem as ListItem;
+
+            if (selectedConnection != null)
+            {
+                SelectedConnection = selectedConnection.Connection;
+                DialogResult = true;
+            }
+        }
+
         private void buttonAdd_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new ConnectionEditDialog(_providerFactory, _notificationView);
+            var dialog = new ConnectionEditDialog(_providerFactory, _notificationView, this);
 
             if (dialog.ShowDialog() == true)
             {
@@ -54,7 +68,7 @@ namespace dax.Gui
 
             if (oldConnection != null)
             {
-                var dialog = new ConnectionEditDialog(_providerFactory, _notificationView)
+                var dialog = new ConnectionEditDialog(_providerFactory, _notificationView, this)
                 {
                     ServerName = oldConnection.Connection.ServerName,
                     DbName = oldConnection.Connection.DbName,
@@ -88,6 +102,21 @@ namespace dax.Gui
             }
         }
 
+        private void buttonSelect_Click(object sender, RoutedEventArgs e)
+        {
+            TrySelectConnection();
+        }
+
+        private void ListConnections_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            TrySelectConnection();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            ReloadConnections();
+        }
+
         private class ListItem
         {
             public ListItem(IConnection connection)
@@ -105,6 +134,6 @@ namespace dax.Gui
             {
                 return String.Format("{0}.{1}", Connection.ServerName, Connection.DbName);
             }
-        }
+        }        
     }
 }

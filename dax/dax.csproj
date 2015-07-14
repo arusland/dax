@@ -66,6 +66,7 @@
     <Compile Include="Core\DaxManager.cs" />
     <Compile Include="Core\Events\NewBlockAddedEventArgs.cs" />
     <Compile Include="Core\Events\ErrorEventArgs.cs" />
+    <Compile Include="Core\Events\QueryProviderEventArgs.cs" />
     <Compile Include="Core\Events\QueryReloadedEventArgs.cs" />
     <Compile Include="Db\Connect\ConnectionRepository.cs" />
     <Compile Include="Db\Connect\IConnection.cs" />

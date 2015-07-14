@@ -1,5 +1,7 @@
 ﻿using dax.Core;
+using dax.Core.Events;
 using dax.Db;
+using dax.Db.Connect;
 using dax.Gui;
 using dax.Utils;
 using Microsoft.Win32;
@@ -20,11 +22,16 @@ namespace dax
         private readonly TabItem _addnewTabItem;
         private readonly TabItem _aboutTabItem;
         private readonly TabItem _startUpTabItem;
+        private readonly ConnectionRepository _connectionRepository;
+        private readonly IProviderFactory _providerFactory;
+        private readonly Dictionary<DaxManager, IDbProvider> _providerMapping = new Dictionary<DaxManager, IDbProvider>();
 
         public MainWindow()
         {
             InitializeComponent();
 
+            _providerFactory = ProviderFactory.Instance;
+            _connectionRepository = new ConnectionRepository(ProviderFactory.Instance);
             _startUpTabItem = new TabItem() { Header = "Home", Content = new StartUpPageControl() };
             tabControlMain.Items.Add(_startUpTabItem);
             _addnewTabItem = new TabItem() { Header = "+" };
@@ -58,8 +65,8 @@ namespace dax
         {
             try
             {
-                DaxManager daxManager = new DaxManager(ProviderFactory.Instance, filePath,
-                        TaskScheduler.FromCurrentSynchronizationContext());
+                DaxManager daxManager = new DaxManager(filePath, TaskScheduler.FromCurrentSynchronizationContext());
+                daxManager.OnQueryProvider += DaxManager_OnQueryProvider;
 
                 var tabItemControl = new TabDocumentControl(daxManager, this);
                 tabItemControl.OnCloseDocument += TabItemControl_OnCloseDocument;
@@ -78,6 +85,25 @@ namespace dax
             {
                 ShowError(ex.Message);
                 RefreshTabsView();
+            }
+        }
+
+        private void DaxManager_OnQueryProvider(object sender, QueryProviderEventArgs e)
+        {
+            if (_providerMapping.ContainsKey(e.Manager) && !e.Reset)
+            {
+                e.Provider = _providerMapping[e.Manager];
+            }
+            else
+            {
+                var dialog = new ConnectionsEditDialog(ProviderFactory.Instance, _connectionRepository, this, this);
+
+                if (dialog.ShowDialog() == true && dialog.SelectedConnection != null)
+                {
+                    var provider = _providerFactory.Create(dialog.SelectedConnection);
+                    _providerMapping[e.Manager] = provider;
+                    e.Provider = provider;
+                }
             }
         }
 
@@ -123,7 +149,7 @@ namespace dax
         }
 
         #region INotificationView interface
-        
+
         public void SetStatus(string text)
         {
             statusLabel.Content = text;
@@ -149,7 +175,7 @@ namespace dax
             MessageBox.Show(message, TITLE_MESSAGE_BOX, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
-        #endregion        
+        #endregion
 
         #region Event Handlers
 
@@ -193,6 +219,16 @@ namespace dax
             {
                 SelectFirstDocument();
             }
+        }
+
+        private void Window_Closed(object sender, EventArgs e)
+        {
+            _connectionRepository.Save();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            _connectionRepository.Load();
         }
 
         #endregion

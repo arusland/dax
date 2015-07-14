@@ -1,6 +1,5 @@
 ﻿using dax.Db.Connect;
 using dax.Db.SqlServer;
-using dax.Properties;
 using System;
 using System.Data.SqlClient;
 
@@ -14,9 +13,9 @@ namespace dax.Db
         {
         }
 
-        public IDbProvider Create()
+        public IDbProvider Create(IConnection connection)
         {
-            return new SqlServerProvider(Settings.Default.ConnectionString);
+            return new SqlServerProvider(connection.ConnectionString);
         }
 
         public IConnection NewConnection(String serverName, String dbName, String login, String password)

@@ -5,7 +5,7 @@ namespace dax.Db
 {
     public interface IProviderFactory
     {
-        IDbProvider Create();
+        IDbProvider Create(IConnection connection);
 
         IConnection NewConnection(String serverName, String dbName, String login, String password);
     }

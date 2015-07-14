@@ -2,7 +2,10 @@
     x:Class="dax.MainWindow"
     Title="DAta eXplorer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Icon="Images/dax.ico">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Closed="Window_Closed"
+    Icon="Images/dax.ico"
+    Loaded="Window_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

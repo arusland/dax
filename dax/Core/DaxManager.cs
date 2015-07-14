@@ -11,25 +11,24 @@ namespace dax.Core
     public class DaxManager
     {
         private const String PROPERTY_QUERY_VERSION = "version.query";
-        private readonly IProviderFactory _dbProviderFactory;
         private DaxDocument _document;
         private readonly TaskScheduler _uiContext;
         public event EventHandler<QueryReloadedEventArgs> OnQueryReloaded;
         public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
         public event EventHandler<ErrorEventArgs> OnError;
+        public event EventHandler<QueryProviderEventArgs> OnQueryProvider;
 
-        public DaxManager(IProviderFactory dbProviderFactory, String filePath, TaskScheduler uiContext)
+        public DaxManager(String filePath, TaskScheduler uiContext)
         {
-            _dbProviderFactory = dbProviderFactory;
             _uiContext = uiContext;
             _document = DaxDocument.Load(filePath);
-        }        
+        }
 
         public IEnumerable<Input> Inputs
         {
-            get 
+            get
             {
-                return _document.Inputs; 
+                return _document.Inputs;
             }
         }
 
@@ -65,24 +64,28 @@ namespace dax.Core
         {
             DoQueryReloadedEvent();
 
-            IDbProvider dbProvider = _dbProviderFactory.Create();
-            String version = GetVersion(dbProvider);
-            Scope scope = GetScope(version);
-            Dictionary<Block, IQueryBlock> acceptedBlocks = new Dictionary<Block, IQueryBlock>();
+            IDbProvider dbProvider = GetQueryProvider();
 
-            foreach(Block block in scope.Blocks)
+            if (dbProvider != null)
             {
-                if (block.CanAccept(inputValues))
+                String version = GetVersion(dbProvider);
+                Scope scope = GetScope(version);
+                Dictionary<Block, IQueryBlock> acceptedBlocks = new Dictionary<Block, IQueryBlock>();
+
+                foreach (Block block in scope.Blocks)
                 {
-                    String query = block.Query.BuildQuery(inputValues);
-                    acceptedBlocks.Add(block, dbProvider.CreateBlock(query));
+                    if (block.CanAccept(inputValues))
+                    {
+                        String query = block.Query.BuildQuery(inputValues);
+                        acceptedBlocks.Add(block, dbProvider.CreateBlock(query));
+                    }
                 }
-            }
-            
-            foreach (var item in acceptedBlocks)
-            {
-                item.Value.Update();
-                DoNewBlockAddedEvent(item.Key, item.Value);           
+
+                foreach (var item in acceptedBlocks)
+                {
+                    item.Value.Update();
+                    DoNewBlockAddedEvent(item.Key, item.Value);
+                }
             }
         }
 
@@ -96,6 +99,16 @@ namespace dax.Core
         private void DoQueryReloadedEvent()
         {
             RunOnUIContext(() => OnQueryReloaded(this, new QueryReloadedEventArgs()));
+        }
+
+        private IDbProvider GetQueryProvider()
+        {
+            var ea = new QueryProviderEventArgs(this);
+            var task = RunOnUIContext(() => OnQueryProvider(this, ea));
+
+            task.Wait();
+
+            return ea.Provider;
         }
 
         private void DoNewBlockAddedEvent(Block block, IQueryBlock queryBlock)
@@ -130,7 +143,7 @@ namespace dax.Core
                     throw new InvalidOperationException(String.Format("Scope for version '{0}' not found", version));
                 }
 
-                return scope;                
+                return scope;
             }
         }
 
@@ -145,7 +158,7 @@ namespace dax.Core
         private Property GetVersionProperty()
         {
             var prop = _document.Properties.FirstOrDefault(p => p.Name == PROPERTY_QUERY_VERSION);
-            
+
             if (prop == null || String.IsNullOrWhiteSpace(prop.Value))
             {
                 return null;
@@ -154,13 +167,15 @@ namespace dax.Core
             return prop;
         }
 
-        private void RunOnUIContext(Action action)
+        private Task RunOnUIContext(Action action)
         {
             var token = Task.Factory.CancellationToken;
-            Task.Factory.StartNew(() =>
+            var task = Task.Factory.StartNew(() =>
             {
                 action();
             }, token, TaskCreationOptions.None, _uiContext);
+
+            return task;
         }
     }
 }

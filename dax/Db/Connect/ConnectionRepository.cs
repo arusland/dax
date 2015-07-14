@@ -1,6 +1,7 @@
 ﻿using dax.Properties;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 
 namespace dax.Db.Connect
@@ -32,18 +33,22 @@ namespace dax.Db.Connect
 
         public void Save()
         {
-            Settings.Default.ConnectionStrings.Clear();
+            Settings.Default.ConnectionStrings = new StringCollection();
             Settings.Default.ConnectionStrings
                 .AddRange(_connections.Select(p => p.ConnectionString).ToArray());
-            Settings.Default.Save();
+            Settings.Default.Save();            
         }
 
         public void Load()
         {
             _connections.Clear();
-            _connections.AddRange(Settings.Default.ConnectionStrings
-                .Cast<String>()
-                .Select(p => _connectionParser.Parse(p)));
+
+            if (Settings.Default.ConnectionStrings != null)
+            {
+                _connections.AddRange(Settings.Default.ConnectionStrings
+                    .Cast<String>()
+                    .Select(p => _connectionParser.Parse(p)));
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using dax.Db;
-using dax.Db.Connect;
 using dax.Extensions;
+using dax.Db.Connect;
 using System;
 using System.Windows;
 
@@ -11,11 +11,12 @@ namespace dax.Gui
         private readonly IProviderFactory _providerFactory;
         private readonly INotificationView _notificationView;
 
-        public ConnectionEditDialog(IProviderFactory providerFactory, INotificationView notificationView)
+        public ConnectionEditDialog(IProviderFactory providerFactory, INotificationView notificationView, Window owner)
         {
             InitializeComponent();
             _providerFactory = providerFactory;
             _notificationView = notificationView;
+            Owner = owner;
         }
 
         public String ServerName
@@ -42,20 +43,10 @@ namespace dax.Gui
             set;
         }
 
-        protected override void OnActivated(EventArgs e)
-        {
-            base.OnActivated(e);
-
-            textBoxServer.Text = ServerName;
-            textBoxDatabase.Text = DbName;
-            textBoxLogin.Text = Login;
-            Password.ToSecureString(textBoxPassword.SecurePassword);
-        }
-
         private void buttonTest_Click(object sender, RoutedEventArgs e)
         {
             IConnection connection = _providerFactory.NewConnection(textBoxServer.Text.Trim(), textBoxDatabase.Text.Trim(),
-                textBoxLogin.Text.Trim(), textBoxPassword.SecurePassword.ToString());
+                textBoxLogin.Text.Trim(), textBoxPassword.SecurePassword.FromSecureString());
 
             buttonTest.IsEnabled = false;
             var task = connection.Test();
@@ -79,13 +70,22 @@ namespace dax.Gui
             ServerName = textBoxServer.Text.Trim();
             DbName = textBoxDatabase.Text.Trim();
             Login = textBoxLogin.Text.Trim();
-            Password = textBoxPassword.SecurePassword.ToString();
+            Password = textBoxPassword.SecurePassword.FromSecureString();
             DialogResult = true;
         }
 
         private void buttonCancel_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            textBoxServer.Text = ServerName;
+            textBoxDatabase.Text = DbName;
+            textBoxLogin.Text = Login;
+            Password.ToSecureString(textBoxPassword.SecurePassword);
+            textBoxServer.Focus();
         }
     }
 }

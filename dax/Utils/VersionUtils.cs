@@ -8,7 +8,7 @@ namespace dax.Utils
         {
             var version = typeof(VersionUtils).Assembly.GetName().Version;
 
-            return String.Format("{0}.{0}", version.Major, version.Minor);
+            return String.Format("{0}.{1}", version.Major, version.Minor);
         }
     }
 }
