@@ -2,7 +2,6 @@
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
-using System.Threading;
 
 namespace dax.Db.SqlServer
 {
@@ -18,9 +17,14 @@ namespace dax.Db.SqlServer
             this._connectionString = _connectionString;
         }
 
-        public System.Data.DataTable Table
+        public DataTable Table
         {
             get { return _table; }
+        }
+
+        public bool IsEmpty
+        {
+            get { return Table == null || Table.Rows.Count == 0; }
         }
 
         public int PageSize

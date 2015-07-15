@@ -8,15 +8,22 @@ namespace dax.Document
     public class Block
     {
         private readonly List<String> _variables;
-        
-        public Block(String title, Query query)
+
+        public Block(String title, Query query, bool showOnEmpty)
         {
             Title = title;
             Query = query;
             _variables = GetVariables(Title, Query);
+            ShowOnEmpty = showOnEmpty;
         }                
 
         public String Title
+        {
+            get;
+            private set;
+        }
+
+        public bool ShowOnEmpty
         {
             get;
             private set;

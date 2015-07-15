@@ -79,7 +79,8 @@ namespace dax.Document
         private List<Block> LoadBlocks(XElement scope)
         {
             var items = scope.GetNodes("block")
-                .Select(p => new Block(p.GetAttribute("title"), LoadQuery(p)))
+                .Select(p => new Block(p.GetAttribute("title"), LoadQuery(p),
+                    bool.Parse(p.GetSafeAttribute("showOnEmpty", "true"))))
                 .ToList();
 
             return items;

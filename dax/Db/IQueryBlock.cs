@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Data;
 using System.Threading.Tasks;
-using System.Data;
 
 namespace dax.Db
 {
@@ -20,6 +16,11 @@ namespace dax.Db
         }
 
         int PageIndex
+        {
+            get;
+        }
+
+        bool IsEmpty
         {
             get;
         }

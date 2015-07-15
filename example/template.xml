@@ -15,7 +15,7 @@
 			</query>
 		</block>
 
-		<block title="All views">
+		<block title="All views" showOnEmpty="false">
 			<query>
 				select * from sys.all_views
 				where name like '%{{VIEW_NAME}}%'

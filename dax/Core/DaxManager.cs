@@ -92,14 +92,20 @@ namespace dax.Core
 
                 foreach (var item in acceptedBlocks)
                 {
-                    item.Value.Update();
+                    Block block = item.Key;
+                    IQueryBlock queryBlock = item.Value;
 
-                    bool canceled = DoNewBlockAddedEvent(item.Key, item.Value);
+                    queryBlock.Update();
 
-                    if (canceled)
+                    if (!queryBlock.IsEmpty || block.ShowOnEmpty)
                     {
-                        // user canceled operation
-                        break;
+                        bool canceled = DoNewBlockAddedEvent(block, queryBlock);
+
+                        if (canceled)
+                        {
+                            // user canceled operation
+                            break;
+                        }
                     }
                 }
             }
