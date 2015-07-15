@@ -32,5 +32,18 @@ namespace dax.Extensions
                 Marshal.ZeroFreeGlobalAllocUnicode(valuePtr);
             }
         }
+
+        public static int IndexOfAny(this String value, params String[] subStrs)
+        {
+            var idx = subStrs.Select(p => value.IndexOf(p))
+                .Where(p => p != -1);
+
+            if (idx.Any())
+            {
+                return idx.Min();
+            }
+
+            return -1;
+        }
     }
 }

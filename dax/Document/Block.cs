@@ -45,7 +45,7 @@ namespace dax.Document
             return _variables.Count == 0 || _variables.All(p => inputValues.ContainsKey(p));
         }
 
-        private static List<string> GetVariables(string Title, Document.Query Query)
+        private static List<string> GetVariables(string Title, Query Query)
         {
             var vars = VariableUtils.ParseVariables(Title);
 
