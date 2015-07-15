@@ -37,6 +37,14 @@
                     Content="Close" />
 
                 <Button
+                    x:Name="buttonReconnect"
+                    Width="80"
+                    Margin="5"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Content="Reconnect" Click="ButtonReconnect_Click" />
+
+                <Button
                     x:Name="buttonSearch"
                     Width="80"
                     Margin="5"

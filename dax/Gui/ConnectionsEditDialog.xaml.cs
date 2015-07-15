@@ -20,7 +20,7 @@ namespace dax.Gui
             _providerFactory = providerFactory;
             _connectionRepository = connectionRepository;
             _notificationView = notificationView;
-            Owner = owner;           
+            Owner = owner;
         }
 
         public IConnection SelectedConnection
@@ -36,6 +36,7 @@ namespace dax.Gui
             {
                 listConnections.Items.Add(connection);
             }
+            RefreshControls();
         }
 
         private void TrySelectConnection()
@@ -50,7 +51,14 @@ namespace dax.Gui
             }
         }
 
-        private void buttonAdd_Click(object sender, RoutedEventArgs e)
+        private void RefreshControls()
+        {
+            buttonSelect.IsEnabled = listConnections.SelectedItem is ListItem;
+        }
+
+        #region Event Handlers
+
+        private void ButtonAdd_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new ConnectionEditDialog(_providerFactory, _notificationView, this);
 
@@ -63,7 +71,7 @@ namespace dax.Gui
             }
         }
 
-        private void buttonEdit_Click(object sender, RoutedEventArgs e)
+        private void ButtonEdit_Click(object sender, RoutedEventArgs e)
         {
             var oldConnection = listConnections.SelectedItem as ListItem;
 
@@ -88,7 +96,7 @@ namespace dax.Gui
             }
         }
 
-        private void buttonDelete_Click(object sender, RoutedEventArgs e)
+        private void ButtonDelete_Click(object sender, RoutedEventArgs e)
         {
             var oldConnection = listConnections.SelectedItem as ListItem;
 
@@ -103,7 +111,7 @@ namespace dax.Gui
             }
         }
 
-        private void buttonSelect_Click(object sender, RoutedEventArgs e)
+        private void ButtonSelect_Click(object sender, RoutedEventArgs e)
         {
             TrySelectConnection();
         }
@@ -117,6 +125,13 @@ namespace dax.Gui
         {
             ReloadConnections();
         }
+
+        private void ListConnections_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            RefreshControls();
+        }
+
+        #endregion
 
         private class ListItem
         {
@@ -135,6 +150,6 @@ namespace dax.Gui
             {
                 return Connection.Format();
             }
-        }        
+        }
     }
 }

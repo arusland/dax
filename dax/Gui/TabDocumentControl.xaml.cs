@@ -60,6 +60,26 @@ namespace dax.Gui
             }
         }
 
+        public void ReloadDocument()
+        {
+            InitGrids();
+
+            foreach (var input in _daxManager.Inputs)
+            {
+                var inputControl = new InputControl(input);
+                inputControl.OnSubmit += (s, e) => InvokeSearch();
+                AddInputField(inputControl);
+            }
+
+            RefreshState();
+            RefreshConnectionStatus();
+        }
+
+        private void RefreshConnectionStatus()
+        {
+            buttonReconnect.Content = _daxManager.IsConnected ? "Reconnect" : "Connect";
+        }
+
         private void RefreshState()
         {
             switch (_currentState)
@@ -79,20 +99,7 @@ namespace dax.Gui
                 default:
                     throw new InvalidOperationException("Unsupported state: " + _currentState);
             }
-        }
-
-        public void ReloadDocument()
-        {
-            InitGrids();
-
-            foreach (var input in _daxManager.Inputs)
-            {
-                var inputControl = new InputControl(input);
-                inputControl.OnSubmit += (s, e) => InvokeSearch();
-                AddInputField(inputControl);
-            }
-            RefreshState();
-        }
+        }        
 
         private void AddInputField(InputControl input)
         {
@@ -141,6 +148,8 @@ namespace dax.Gui
                 _notificationView.SetStatus("Canceling...");
                 CurrentState = OperationState.Canceling;
             }
+
+            RefreshConnectionStatus();
         }
 
         private void InvokeSearch()
@@ -186,6 +195,7 @@ namespace dax.Gui
             Grid.SetRow(tableitem, gridBlocks.RowDefinitions.Count - 1);
 
             e.Canceled = _currentState == OperationState.Canceling;
+            RefreshConnectionStatus();
         }
 
         private void DaxManager_OnQueryReloaded(object sender, QueryReloadedEventArgs e)
@@ -206,6 +216,13 @@ namespace dax.Gui
             }
         }
 
-        #endregion
+        private void ButtonReconnect_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var task = _daxManager.Reconnect();
+
+            task.GetAwaiter().OnCompleted(RefreshConnectionStatus);
+        }
+
+        #endregion   
     }
 }

@@ -17,6 +17,7 @@ namespace dax.Core
         public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
         public event EventHandler<ErrorEventArgs> OnError;
         public event EventHandler<QueryProviderEventArgs> OnQueryProvider;
+        private IDbProvider _lastProvider;
 
         public DaxManager(String filePath, TaskScheduler uiContext)
         {
@@ -45,6 +46,14 @@ namespace dax.Core
             get
             {
                 return _document.Name;
+            }
+        }
+
+        public bool IsConnected
+        {
+            get
+            {
+                return _lastProvider != null;
             }
         }
 
@@ -103,15 +112,28 @@ namespace dax.Core
             await task;
         }
 
+        public Task Reconnect()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                GetQueryProvider(true);
+            });
+        }
+
         private void DoQueryReloadedEvent()
         {
             RunOnUIContext(() => OnQueryReloaded(this, new QueryReloadedEventArgs()));
         }
 
-        private IDbProvider GetQueryProvider()
+        private IDbProvider GetQueryProvider(bool reset = false)
         {
-            var ea = new QueryProviderEventArgs(this);
+            var ea = new QueryProviderEventArgs(this, reset);
             RunOnUIContext(() => OnQueryProvider(this, ea));
+
+            if (ea.Provider != null)
+            {
+                _lastProvider = ea.Provider;
+            }
 
             return ea.Provider;
         }
