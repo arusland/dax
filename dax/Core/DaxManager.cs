@@ -16,8 +16,7 @@ namespace dax.Core
         public event EventHandler<QueryReloadedEventArgs> OnQueryReloaded;
         public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
         public event EventHandler<ErrorEventArgs> OnError;
-        public event EventHandler<QueryProviderEventArgs> OnQueryProvider;
-        private IDbProvider _lastProvider;
+        public event EventHandler<QueryProviderEventArgs> OnQueryProvider;        
 
         public DaxManager(String filePath, TaskScheduler uiContext)
         {
@@ -51,10 +50,8 @@ namespace dax.Core
 
         public bool IsConnected
         {
-            get
-            {
-                return _lastProvider != null;
-            }
+            get;
+            private set;
         }
 
         public void Reload(Dictionary<String, String> inputValues)
@@ -138,7 +135,7 @@ namespace dax.Core
 
             if (ea.Provider != null)
             {
-                _lastProvider = ea.Provider;
+                IsConnected = true;
             }
 
             return ea.Provider;
