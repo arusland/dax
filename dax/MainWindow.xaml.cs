@@ -2,6 +2,7 @@
 using dax.Core.Events;
 using dax.Db;
 using dax.Db.Connect;
+using dax.Extensions;
 using dax.Gui;
 using dax.Utils;
 using Microsoft.Win32;
@@ -19,6 +20,7 @@ namespace dax
         private const String TITLE_TEMPLATE_WITH_DOCUMENT = "DAta eXplorer - [{0}] - ver{1}";
         private const String TITLE_TEMPLATE = "DAta eXplorer - ver{0}";
         private const String TITLE_MESSAGE_BOX = "Data Explorer";
+        private const String TAB_ITEM_HEADER = "{0} [{1}]";
         private readonly TabItem _addnewTabItem;
         private readonly TabItem _aboutTabItem;
         private readonly TabItem _startUpTabItem;
@@ -71,6 +73,7 @@ namespace dax
                 var tabItemControl = new TabDocumentControl(daxManager, this);
                 tabItemControl.OnCloseDocument += TabItemControl_OnCloseDocument;
                 var item = new TabItem();
+                item.Tag = daxManager;
                 item.Header = daxManager.DocumentName;
                 item.Content = tabItemControl;
 
@@ -87,6 +90,7 @@ namespace dax
                 RefreshTabsView();
             }
         }
+
 
         private void DaxManager_OnQueryProvider(object sender, QueryProviderEventArgs e)
         {
@@ -105,6 +109,8 @@ namespace dax
                     e.Provider = provider;
                 }
             }
+
+            UpdateCurrentTabHeader();
         }
 
         private void RefreshTabsView()
@@ -148,6 +154,22 @@ namespace dax
             }
         }
 
+        private void UpdateCurrentTabHeader()
+        {
+            var currentTabItem = (TabItem)tabControlMain.SelectedItem;
+
+            if (currentTabItem != null)
+            {
+                var doc = currentTabItem.Content as TabDocumentControl;
+
+                if (_providerMapping.ContainsKey(doc.Manager))
+                {
+                    var provider = _providerMapping[doc.Manager];
+                    currentTabItem.Header = String.Format(TAB_ITEM_HEADER, doc.Manager.DocumentName, provider.Connection.Format());
+                }
+            }
+        }
+
         #region INotificationView interface
 
         public void SetStatus(string text)
@@ -179,7 +201,7 @@ namespace dax
 
         #region Event Handlers
 
-        private void tabControlMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void TabControlMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (tabControlMain.SelectedItem != null)
             {

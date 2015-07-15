@@ -1,25 +1,30 @@
-﻿using System;
+﻿using dax.Db.Connect;
+using System;
 using System.Data.SqlClient;
 
 namespace dax.Db.SqlServer
 {
     public class SqlServerProvider : IDbProvider
     {
-        private readonly String _connectionString;
-
-        public SqlServerProvider(String connectionString)
+        public SqlServerProvider(IConnection connection)
         {
-            _connectionString = connectionString;
+            Connection = connection;
+        }
+
+        public IConnection Connection
+        {
+            get;
+            private set;
         }
 
         public IQueryBlock CreateBlock(String query)
         {
-            return new SqlServerQueryBlock(query, _connectionString);
+            return new SqlServerQueryBlock(query, Connection.ConnectionString);
         }
 
         public object ExecuteScalar(String query)
         {
-            using (SqlConnection connection = new SqlConnection(_connectionString))
+            using (SqlConnection connection = new SqlConnection(Connection.ConnectionString))
             {
                 SqlCommand command = new SqlCommand(query, connection);
 
@@ -36,5 +41,7 @@ namespace dax.Db.SqlServer
                 }
             }
         }
+
+        
     }
 }

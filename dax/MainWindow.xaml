@@ -15,7 +15,7 @@
         <TabControl
             x:Name="tabControlMain"
             Grid.Row="0"
-            SelectionChanged="tabControlMain_SelectionChanged" />
+            SelectionChanged="TabControlMain_SelectionChanged" />
 
         <StatusBar
             Name="statusBarMain"

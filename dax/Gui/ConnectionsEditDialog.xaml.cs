@@ -1,5 +1,6 @@
 ﻿using dax.Db;
 using dax.Db.Connect;
+using dax.Extensions;
 using System;
 using System.Linq;
 using System.Windows;
@@ -132,7 +133,7 @@ namespace dax.Gui
 
             public override string ToString()
             {
-                return String.Format("{0}.{1}", Connection.ServerName, Connection.DbName);
+                return Connection.Format();
             }
         }        
     }

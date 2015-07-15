@@ -15,7 +15,7 @@ namespace dax.Db
 
         public IDbProvider Create(IConnection connection)
         {
-            return new SqlServerProvider(connection.ConnectionString);
+            return new SqlServerProvider(connection);
         }
 
         public IConnection NewConnection(String serverName, String dbName, String login, String password)

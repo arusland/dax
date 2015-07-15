@@ -58,7 +58,7 @@
             <Button
                 x:Name="buttonSelect"
                 Height="25"
-                Margin="5,3,5,3"
+                Margin="5,5,5,5"
                 VerticalAlignment="Bottom"
                 Click="buttonSelect_Click"
                 Content="Select" />
