@@ -17,6 +17,7 @@ namespace dax.Gui
         private readonly DaxManager _daxManager;
         private readonly INotificationView _notificationView;
         public event EventHandler<EventArgs> OnCloseDocument;
+        private OperationState _currentState;
 
         public TabDocumentControl(DaxManager daxManager, INotificationView notificationView)
         {
@@ -27,7 +28,7 @@ namespace dax.Gui
             _daxManager.OnNewBlockAdded += DaxManager_OnNewBlockAdded;
             _daxManager.OnError += DaxManager_OnError;
             InitGrids();
-        }        
+        }
 
         public DaxManager Manager
         {
@@ -50,6 +51,36 @@ namespace dax.Gui
             }
         }
 
+        private OperationState CurrentState
+        {
+            set
+            {
+                _currentState = value;
+                RefreshState();
+            }
+        }
+
+        private void RefreshState()
+        {
+            switch (_currentState)
+            {
+                case OperationState.Ready:
+                    buttonSearch.Content = "Search";
+                    buttonSearch.IsEnabled = true;
+                    break;
+                case OperationState.Searching:
+                    buttonSearch.Content = "Cancel";
+                    buttonSearch.IsEnabled = true;
+                    break;
+                case OperationState.Canceling:
+                    buttonSearch.Content = "Canceling...";
+                    buttonSearch.IsEnabled = false;
+                    break;
+                default:
+                    throw new InvalidOperationException("Unsupported state: " + _currentState);
+            }
+        }
+
         public void ReloadDocument()
         {
             InitGrids();
@@ -57,8 +88,10 @@ namespace dax.Gui
             foreach (var input in _daxManager.Inputs)
             {
                 var inputControl = new InputControl(input);
+                inputControl.OnSubmit += (s, e) => InvokeSearch();
                 AddInputField(inputControl);
             }
+            RefreshState();
         }
 
         private void AddInputField(InputControl input)
@@ -99,34 +132,60 @@ namespace dax.Gui
 
         private void buttonSearch_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            var inputs = InputControls.Where(p => p.IsSelected)
-                .Where(p => p.Context.AllowBlank || !String.IsNullOrEmpty(p.InputValue))
-                .ToList();
-
-            if (inputs.Count > 0)
+            if (_currentState == OperationState.Ready)
             {
-                _notificationView.SetStatus("Loading...");
-                buttonSearch.IsEnabled = false;
-                var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
-                var task = _daxManager.ReloadAsync(inputValues);
-                task.GetAwaiter().OnCompleted(() =>  
-                {
-                    _notificationView.SetStatus(String.Empty);
-                    buttonSearch.IsEnabled = true;
-                });
+                InvokeSearch();
             }
-            else
+            else if (_currentState == OperationState.Searching)
             {
-                _notificationView.SetStatus("Nothing to search!");
+                _notificationView.SetStatus("Canceling...");
+                CurrentState = OperationState.Canceling;
             }
         }
 
+        private void InvokeSearch()
+        {
+            if (_currentState == OperationState.Ready)
+            {
+                var inputs = InputControls.Where(p => p.IsSelected)
+                                .Where(p => p.Context.AllowBlank || !String.IsNullOrEmpty(p.InputValue))
+                                .ToList();
+
+                if (inputs.Count > 0)
+                {
+                    _notificationView.SetStatus("Loading...");
+                    buttonSearch.IsEnabled = false;
+                    var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
+                    var task = _daxManager.ReloadAsync(inputValues);
+                    task.GetAwaiter().OnCompleted(() =>
+                    {
+                        if (_currentState == OperationState.Canceling)
+                        {
+                            _notificationView.SetStatus("Operation canceled by user");
+                        }
+                        else
+                        {
+                            _notificationView.SetStatus(String.Empty);
+                        }
+
+                        CurrentState = OperationState.Ready;
+                    });
+                    CurrentState = OperationState.Searching;
+                }
+                else
+                {
+                    _notificationView.SetStatus("Nothing to search!");
+                }
+            }
+        }
         private void DaxManager_OnNewBlockAdded(object sender, NewBlockAddedEventArgs e)
         {
             var tableitem = new TableControl(e.Block, e.QueryBlock, _notificationView);
             gridBlocks.RowDefinitions.Add(new RowDefinition());
             gridBlocks.Children.Add(tableitem);
             Grid.SetRow(tableitem, gridBlocks.RowDefinitions.Count - 1);
+
+            e.Canceled = _currentState == OperationState.Canceling;
         }
 
         private void DaxManager_OnQueryReloaded(object sender, QueryReloadedEventArgs e)
@@ -139,7 +198,7 @@ namespace dax.Gui
             _notificationView.ShowError(e.Message);
         }
 
-        private void buttonClose_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void ButtonClose_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             if (OnCloseDocument != null)
             {

@@ -11,17 +11,23 @@ namespace dax.Core.Events
             Block = block;
             QueryBlock = queryBlock;
         }
-        
+
         public Block Block
         {
             get;
             private set;
         }
-        
+
         public IQueryBlock QueryBlock
         {
             get;
             private set;
+        }
+
+        public bool Canceled
+        {
+            get;
+            set;
         }
     }
 }

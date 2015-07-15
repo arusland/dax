@@ -1,13 +1,14 @@
 ﻿using dax.Document;
 using System;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace dax.Gui
 {
     public partial class InputControl : UserControl
     {
         private readonly Input _input;
-
+        public event EventHandler<EventArgs> OnSubmit;
         public InputControl(Input input)
         {
             InitializeComponent();
@@ -58,12 +59,7 @@ namespace dax.Gui
             {
                 return _input;
             }
-        }
-
-        private void checkBoxEnabled_CheckedChanged(object sender, System.Windows.RoutedEventArgs e)
-        {
-            RefreshView();
-        }
+        }        
 
         private void RefreshView()
         {
@@ -72,5 +68,22 @@ namespace dax.Gui
                 textBoxValue.IsEnabled = checkBoxEnabled.IsChecked == true;
             }
         }
+
+        #region Event Handlers
+        
+        private void checkBoxEnabled_CheckedChanged(object sender, System.Windows.RoutedEventArgs e)
+        {
+            RefreshView();
+        }
+
+        private void textBoxValue_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter && OnSubmit != null)
+            {
+                OnSubmit(this, EventArgs.Empty);
+            }
+        }
+
+        #endregion
     }
 }

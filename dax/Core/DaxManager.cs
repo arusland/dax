@@ -84,7 +84,14 @@ namespace dax.Core
                 foreach (var item in acceptedBlocks)
                 {
                     item.Value.Update();
-                    DoNewBlockAddedEvent(item.Key, item.Value);
+
+                    bool canceled = DoNewBlockAddedEvent(item.Key, item.Value);
+
+                    if (canceled)
+                    {
+                        // user canceled operation
+                        break;
+                    }
                 }
             }
         }
@@ -104,16 +111,16 @@ namespace dax.Core
         private IDbProvider GetQueryProvider()
         {
             var ea = new QueryProviderEventArgs(this);
-            var task = RunOnUIContext(() => OnQueryProvider(this, ea));
-
-            task.Wait();
+            RunOnUIContext(() => OnQueryProvider(this, ea));
 
             return ea.Provider;
         }
 
-        private void DoNewBlockAddedEvent(Block block, IQueryBlock queryBlock)
+        private bool DoNewBlockAddedEvent(Block block, IQueryBlock queryBlock)
         {
-            RunOnUIContext(() => OnNewBlockAdded(this, new NewBlockAddedEventArgs(block, queryBlock)));
+            var ea = new NewBlockAddedEventArgs(block, queryBlock);
+            RunOnUIContext(() => OnNewBlockAdded(this, ea));
+            return ea.Canceled;
         }
 
         private void DoErrorEvent(String message)
@@ -167,13 +174,18 @@ namespace dax.Core
             return prop;
         }
 
-        private Task RunOnUIContext(Action action)
+        private Task RunOnUIContext(Action action, bool isAsync = false)
         {
             var token = Task.Factory.CancellationToken;
             var task = Task.Factory.StartNew(() =>
             {
                 action();
             }, token, TaskCreationOptions.None, _uiContext);
+
+            if (!isAsync)
+            {
+                task.Wait();
+            }
 
             return task;
         }

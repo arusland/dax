@@ -89,29 +89,7 @@ namespace dax
                 ShowError(ex.Message);
                 RefreshTabsView();
             }
-        }
-
-
-        private void DaxManager_OnQueryProvider(object sender, QueryProviderEventArgs e)
-        {
-            if (_providerMapping.ContainsKey(e.Manager) && !e.Reset)
-            {
-                e.Provider = _providerMapping[e.Manager];
-            }
-            else
-            {
-                var dialog = new ConnectionsEditDialog(ProviderFactory.Instance, _connectionRepository, this, this);
-
-                if (dialog.ShowDialog() == true && dialog.SelectedConnection != null)
-                {
-                    var provider = _providerFactory.Create(dialog.SelectedConnection);
-                    _providerMapping[e.Manager] = provider;
-                    e.Provider = provider;
-                }
-            }
-
-            UpdateCurrentTabHeader();
-        }
+        }        
 
         private void RefreshTabsView()
         {
@@ -200,6 +178,27 @@ namespace dax
         #endregion
 
         #region Event Handlers
+
+        private void DaxManager_OnQueryProvider(object sender, QueryProviderEventArgs e)
+        {
+            if (_providerMapping.ContainsKey(e.Manager) && !e.Reset)
+            {
+                e.Provider = _providerMapping[e.Manager];
+            }
+            else
+            {
+                var dialog = new ConnectionsEditDialog(ProviderFactory.Instance, _connectionRepository, this, this);
+
+                if (dialog.ShowDialog() == true && dialog.SelectedConnection != null)
+                {
+                    var provider = _providerFactory.Create(dialog.SelectedConnection);
+                    _providerMapping[e.Manager] = provider;
+                    e.Provider = provider;
+                }
+            }
+
+            UpdateCurrentTabHeader();
+        }
 
         private void TabControlMain_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

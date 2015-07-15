@@ -98,6 +98,7 @@
     <Compile Include="Gui\InputControl.xaml.cs">
       <DependentUpon>InputControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\OperationState.cs" />
     <Compile Include="Gui\StartUpPageControl.xaml.cs">
       <DependentUpon>StartUpPageControl.xaml</DependentUpon>
     </Compile>

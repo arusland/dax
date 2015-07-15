@@ -19,7 +19,8 @@
                 x:FieldModifier="private"
                 Height="23"
                 MinWidth="100"
-                Margin="3" />
+                Margin="3" 
+                PreviewKeyUp="textBoxValue_PreviewKeyUp"/>
         </StackPanel>
     </Grid>
 </UserControl>
