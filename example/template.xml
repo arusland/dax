@@ -21,6 +21,12 @@
 				where name like '%{{VIEW_NAME}}%'
 			</query>
 		</block>	
+
+		<block title="All tables">
+			<query>
+				select * from information_schema.tables
+			</query>
+		</block>
 	</scope>
 </project>
     

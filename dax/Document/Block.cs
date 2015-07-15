@@ -40,9 +40,9 @@ namespace dax.Document
             get { return _variables; }
         }
 
-        public bool CanAccept(Dictionary<String, String> inputValues)
+        public bool CanExecute(Dictionary<String, String> inputValues)
         {
-            return _variables.All(p => inputValues.ContainsKey(p));
+            return _variables.Count == 0 || _variables.All(p => inputValues.ContainsKey(p));
         }
 
         private static List<string> GetVariables(string Title, Document.Query Query)

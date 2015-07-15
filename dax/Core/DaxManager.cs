@@ -80,7 +80,7 @@ namespace dax.Core
 
                 foreach (Block block in scope.Blocks)
                 {
-                    if (block.CanAccept(inputValues))
+                    if (block.CanExecute(inputValues))
                     {
                         String query = block.Query.BuildQuery(inputValues);
                         acceptedBlocks.Add(block, dbProvider.CreateBlock(query));
