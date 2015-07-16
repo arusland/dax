@@ -59,6 +59,12 @@ namespace dax.Gui
             }
         }
 
+        public void ReloadFile()
+        {
+            _daxManager.ReloadDocument();
+            ReloadDocument();
+        }
+
         public void ReloadDocument()
         {
             InitGrids();
@@ -205,6 +211,11 @@ namespace dax.Gui
             var task = _daxManager.Reconnect();
 
             task.GetAwaiter().OnCompleted(RefreshConnectionStatus);
+        }
+
+        private void ButtonReload_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ReloadFile();
         }
 
         #endregion

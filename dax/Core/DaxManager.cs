@@ -54,13 +54,25 @@ namespace dax.Core
             private set;
         }
 
+        public void ReloadDocument()
+        {
+            try
+            {
+                _document = DaxDocument.Load(_document.FilePath);
+            }
+            catch (System.Exception ex)
+            {
+                DoErrorEvent(ex.Message);
+            }
+        }
+
         public void Reload(Dictionary<String, String> inputValues)
         {
             try
             {
                 ReloadInternal(inputValues);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 DoErrorEvent(ex.Message);
             }
@@ -150,7 +162,7 @@ namespace dax.Core
 
         private void DoErrorEvent(String message)
         {
-            RunOnUIContext(() => OnError(this, new ErrorEventArgs(message)));
+            RunOnUIContext(() => OnError(this, new ErrorEventArgs(message)), true);
         }
 
         private Scope GetScope(String version)

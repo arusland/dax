@@ -113,6 +113,8 @@
     <Compile Include="Gui\TableControl.xaml.cs">
       <DependentUpon>TableControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Managers\FileChangedEventArgs.cs" />
+    <Compile Include="Managers\FileWatcher.cs" />
     <Compile Include="Utils\VariableUtils.cs" />
     <Compile Include="Utils\VersionUtils.cs" />
     <Page Include="Gui\AboutBox.xaml">

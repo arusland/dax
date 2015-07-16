@@ -4,6 +4,7 @@ using dax.Db;
 using dax.Db.Connect;
 using dax.Extensions;
 using dax.Gui;
+using dax.Managers;
 using dax.Utils;
 using Microsoft.Win32;
 using System;
@@ -17,15 +18,17 @@ namespace dax
 {
     public partial class MainWindow : Window, INotificationView
     {
-        private const String TITLE_TEMPLATE_WITH_DOCUMENT = "DAta eXplorer - [{0}] - ver{1}";
-        private const String TITLE_TEMPLATE = "DAta eXplorer - ver{0}";
+        private const String TITLE_TEMPLATE_WITH_DOCUMENT = "DAta eXplorer - [{0}] - ver {1}";
+        private const String TITLE_TEMPLATE = "DAta eXplorer - ver {0}";
         private const String TITLE_MESSAGE_BOX = "Data Explorer";
+
         private readonly TabItem _addnewTabItem;
         private readonly TabItem _aboutTabItem;
         private readonly TabItem _startUpTabItem;
         private readonly ConnectionRepository _connectionRepository;
         private readonly IProviderFactory _providerFactory;
         private readonly Dictionary<DaxManager, IDbProvider> _providerMapping = new Dictionary<DaxManager, IDbProvider>();
+        private readonly FileWatcher _fileWathcer;
 
         public MainWindow()
         {
@@ -43,6 +46,9 @@ namespace dax
             _aboutTabItem.MouseUp += TextBlockAbout_MouseUp;
             _aboutTabItem.Content = new BackgroundControl();
             tabControlMain.Items.Add(_aboutTabItem);
+            _fileWathcer = new FileWatcher(TaskScheduler.FromCurrentSynchronizationContext());
+
+            _fileWathcer.OnFileChanged += FileWatcher_OnFileChanged;
         }
 
         private IEnumerable<TabItem> CurrentDocumentTabItems
@@ -83,13 +89,15 @@ namespace dax
                 tabItemControl.ReloadDocument();
                 RefreshTabsView();
                 tabControlMain.SelectedValue = item;
+
+                _fileWathcer.WatchFile(filePath);
             }
             catch (System.Exception ex)
             {
                 ShowError(ex.Message);
                 RefreshTabsView();
             }
-        }                
+        }
 
         private void RefreshTabsView()
         {
@@ -210,7 +218,7 @@ namespace dax
             {
                 SelectFirstDocument();
             }
-        }        
+        }
 
         private void TextBlockAbout_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -249,6 +257,27 @@ namespace dax
             if (tabItem != null)
             {
                 tabControlMain.Items.Remove(tabItem);
+                var closedFile = ((DaxManager)tabItem.Tag).FilePath;
+
+                if (CurrentDocuments.All(p => p.Manager.FilePath != closedFile))
+                {
+                    _fileWathcer.UnwatchFile(closedFile);
+                }
+            }
+        }
+
+        private void FileWatcher_OnFileChanged(object sender, FileChangedEventArgs e)
+        {
+            if (ShowQuestion(String.Format("File '{0}' was modified. Reload it?", e.FilePath), MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                var documentsToReload = CurrentDocuments
+                    .Where(p => p.Manager.FilePath.ToLower() == e.FilePath.ToLower())
+                    .ToList();
+
+                foreach (var doc in documentsToReload)
+                {
+                    doc.ReloadFile();
+                }
             }
         }
 
