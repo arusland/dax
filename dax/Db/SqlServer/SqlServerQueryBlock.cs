@@ -38,6 +38,11 @@ namespace dax.Db.SqlServer
             private set;
         }
 
+        public string QueryText
+        {
+            get { return _query; }
+        }
+
         public void Update()
         {
             UpdateInternal();

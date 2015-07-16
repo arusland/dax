@@ -25,6 +25,11 @@ namespace dax.Db
             get;
         }
 
+        string QueryText
+        {
+            get;
+        }
+
         void Update();
 
         void NextPage();

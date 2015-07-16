@@ -1,6 +1,7 @@
 ﻿using dax.Db;
 using dax.Document;
 using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
@@ -8,6 +9,7 @@ namespace dax.Gui
 {
     public partial class TableControl : UserControl
     {
+        private readonly Regex CLEAR_PATTERN = new Regex(@"[\t ]+");
         private readonly IQueryBlock _queryBlock;
         private readonly Block _block;
         private readonly INotificationView _notificationView;
@@ -20,6 +22,7 @@ namespace dax.Gui
             _queryBlock = queryBlock;
             _notificationView = notificationView;
             Title = block.Title;
+            labelTitle.ToolTip = CLEAR_PATTERN.Replace(queryBlock.QueryText, " ").Trim();
             RefreshPaging();
         }
 
