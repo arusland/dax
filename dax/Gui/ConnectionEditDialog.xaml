@@ -6,7 +6,7 @@
     Loaded="Window_Loaded"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
-    WindowStartupLocation="CenterOwner">
+    WindowStartupLocation="CenterOwner" Icon="/dax;component/Images/dax.ico">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />

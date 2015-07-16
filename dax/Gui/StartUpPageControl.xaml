@@ -15,7 +15,7 @@
             <TextBlock
                 FontSize="30"
                 Foreground="Gray"
-                Text="Press tab '+' to open new document" />
+                Text="Click tab '+' to open new document" />
         </StackPanel>
     </Grid>
 </UserControl>
