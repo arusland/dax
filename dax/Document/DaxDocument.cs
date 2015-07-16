@@ -88,7 +88,7 @@ namespace dax.Document
 
         private Query LoadQuery(XElement block)
         {
-            return new Query(block.GetNodeValue("query"));
+            return Query.NewQuery(block.GetNodeValue("query"));
         }
 
         private List<Input> LoadInputs(XDocument doc)

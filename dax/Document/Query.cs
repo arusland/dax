@@ -1,57 +1,44 @@
-﻿using dax.Utils;
-using dax.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace dax.Document
 {
-    // TODO: Make Query pure abstract class!!!
-    public class Query
+    public abstract class Query
     {
-        private readonly List<String> _variables = new List<String>();
-
-        protected Query(String content)
-            : this(content, false)
-        {
-        }
-
-        protected Query(String content, bool conditional)
-        {
-            Conditional = conditional;
-            Content = content ?? String.Empty;
-            _variables = VariableUtils.ParseVariables(Content);
-        }
-
-        public virtual String Content
+        public abstract String Content
         {
             get;
-            private set;
+            protected set;
         }
 
-        public virtual bool Conditional
+        public abstract bool Conditional
         {
             get;
-            private set;
+            protected set;
         }
 
-        public virtual IEnumerable<String> Variables
+        public abstract IEnumerable<String> Variables
         {
-            get { return _variables; }
+            get;
         }
 
-        public virtual String BuildQuery(Dictionary<String, String> map)
-        {
-            return VariableUtils.BuildQuery(Content, _variables, map);
-        }
+        public abstract String BuildQuery(Dictionary<String, String> inputValues);
+
+        public abstract bool CanExecute(Dictionary<String, String> inputValues);
 
         public override String ToString()
         {
             return String.Format("Conent={0}", Content);
         }       
 
-        public static Query NewQuery(String content)
+        public static Query NewQuery(String content, bool conditional = false)
         {
+            if (QueryContainer.IsAcceptable(content))
+            {
+                return new QueryContainer(content);
+            }
 
+            return new QueryBasic(content, conditional);
         }
     }
 }

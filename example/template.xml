@@ -6,6 +6,7 @@
 	<input>
 		<field name="OBJECT_NAME" title="Object name" allowBlank="false"/>
 		<field name="VIEW_NAME" title="View name"/>
+		<field name="TABLE_NAME" title="Table name" allowBlank="false"/>		
 	</input>
 
 	<scope version="x.x">
@@ -31,7 +32,7 @@
 		<block title="All columns (conditional)">
 			<query>
 				select * from information_schema.columns
-				[[where table_name like '%{{TABLE_NAME}}%']]
+				[[where table_name like '%{{TABLE_NAME}}%']]		
 			</query>
 		</block>
 	</scope>

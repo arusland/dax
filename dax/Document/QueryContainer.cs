@@ -1,9 +1,8 @@
-﻿using System;
+﻿using dax.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using dax.Extensions;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace dax.Document
 {
@@ -11,10 +10,54 @@ namespace dax.Document
     {
         private readonly List<Query> _subQueries;
 
-        protected QueryContainer(String content)
-            :base(content)
+        public QueryContainer(String content)
         {
+            Content = content;
             _subQueries = ParseSubqueries(content);
+        }
+
+        public override string Content
+        {
+            get;
+            protected set;
+        }
+
+        public override bool Conditional
+        {
+            get;
+            protected set;
+        }
+
+        public override IEnumerable<string> Variables
+        {
+            get { return _subQueries.SelectMany(p => p.Variables); }
+        }
+
+        public override string BuildQuery(Dictionary<string, string> inputValues)
+        {
+            StringBuilder result = new StringBuilder();
+
+            foreach (Query query in _subQueries)
+            {
+                if (!query.Conditional || query.CanExecute(inputValues))
+                {
+                    result.Append(query.BuildQuery(inputValues));
+                }
+            }
+
+            return result.ToString();
+        }
+
+        public override bool CanExecute(Dictionary<string, string> inputValues)
+        {
+            var notConditionals = _subQueries.Where(p => !p.Conditional).ToList();
+
+            return notConditionals.Count == 0 || notConditionals.All(p => p.CanExecute(inputValues));
+        }
+
+        public static bool IsAcceptable(String value)
+        {
+            return IndexOfAny(value) >= 0;
         }
         
         private static List<Query> ParseSubqueries(String content)
@@ -24,18 +67,18 @@ namespace dax.Document
 
             while (parsing.Length > 0)
             {
-                int index = content.IndexOfAny("[[", "]]");
+                int index = IndexOfAny(parsing);
 
                 if (index == -1)
                 {
                     // last query block found
-                    result.Add(new Query(parsing));
+                    result.Add(Query.NewQuery(parsing, false));
                     break;
                 }
 
                 if (index > 0)
                 {
-                    result.Add(new Query(parsing.Substring(0, index)));
+                    result.Add(Query.NewQuery(parsing.Substring(0, index), false));
                 }
 
                 if (parsing[index] == ']')
@@ -61,7 +104,7 @@ namespace dax.Document
                 if (indexEnd > index)
                 {
                     String block = parsing.Substring(index, indexEnd - index);
-                    result.Add(new Query(block, true));
+                    result.Add(Query.NewQuery(block, true));
                 }
 
                 indexEnd += 2;
@@ -71,10 +114,15 @@ namespace dax.Document
                     break;
                 }
 
-                parsing = parsing.Substring(indexEnd + 2);
+                parsing = parsing.Substring(indexEnd);
             }
 
             return result;
         }
+
+        private static int IndexOfAny(String value)
+        {
+            return value.IndexOfAny("[[", "]]");
+        }        
     }
 }

@@ -1,19 +1,14 @@
-﻿using dax.Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace dax.Document
 {
     public class Block
     {
-        private readonly List<String> _variables;
-
         public Block(String title, Query query, bool showOnEmpty)
         {
             Title = title;
             Query = query;
-            _variables = GetVariables(Title, Query);
             ShowOnEmpty = showOnEmpty;
         }                
 
@@ -35,24 +30,15 @@ namespace dax.Document
             private set;
         }
 
-        public List<String> Variables
+        public IEnumerable<String> Variables
         {
-            get { return _variables; }
+            get { return Query.Variables; }
         }
 
         public bool CanExecute(Dictionary<String, String> inputValues)
         {
-            return _variables.Count == 0 || _variables.All(p => inputValues.ContainsKey(p));
-        }
-
-        private static List<string> GetVariables(string Title, Query Query)
-        {
-            var vars = VariableUtils.ParseVariables(Title);
-
-            vars.AddRange(Query.Variables);
-
-            return vars.Distinct().ToList();
-        }
+            return Query.CanExecute(inputValues);
+        }        
 
         public override String ToString()
         {

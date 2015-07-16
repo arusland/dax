@@ -79,6 +79,8 @@
     <Compile Include="Db\SqlServer\SqlServerConnection.cs" />
     <Compile Include="Db\SqlServer\SqlServerProvider.cs" />
     <Compile Include="Db\SqlServer\SqlServerQueryBlock.cs" />
+    <Compile Include="Document\QueryBasic.cs" />
+    <Compile Include="Document\QueryContainer.cs" />
     <Compile Include="Extensions\ConnectionExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\XDocumentExtensions.cs" />

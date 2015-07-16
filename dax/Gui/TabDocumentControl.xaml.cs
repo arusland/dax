@@ -99,7 +99,7 @@ namespace dax.Gui
                 default:
                     throw new InvalidOperationException("Unsupported state: " + _currentState);
             }
-        }        
+        }
 
         private void AddInputField(InputControl input)
         {
@@ -160,31 +160,24 @@ namespace dax.Gui
                                 .Where(p => p.Context.AllowBlank || !String.IsNullOrEmpty(p.InputValue))
                                 .ToList();
 
-                if (inputs.Count > 0)
+                _notificationView.SetStatus("Loading...");
+                buttonSearch.IsEnabled = false;
+                var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
+                var task = _daxManager.ReloadAsync(inputValues);
+                task.GetAwaiter().OnCompleted(() =>
                 {
-                    _notificationView.SetStatus("Loading...");
-                    buttonSearch.IsEnabled = false;
-                    var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
-                    var task = _daxManager.ReloadAsync(inputValues);
-                    task.GetAwaiter().OnCompleted(() =>
+                    if (_currentState == OperationState.Canceling)
                     {
-                        if (_currentState == OperationState.Canceling)
-                        {
-                            _notificationView.SetStatus("Operation canceled by user");
-                        }
-                        else
-                        {
-                            _notificationView.SetStatus(String.Empty);
-                        }
+                        _notificationView.SetStatus("Operation canceled by user");
+                    }
+                    else
+                    {
+                        _notificationView.SetStatus(String.Empty);
+                    }
 
-                        CurrentState = OperationState.Ready;
-                    });
-                    CurrentState = OperationState.Searching;
-                }
-                else
-                {
-                    _notificationView.SetStatus("Nothing to search!");
-                }
+                    CurrentState = OperationState.Ready;
+                });
+                CurrentState = OperationState.Searching;
             }
         }
         private void DaxManager_OnNewBlockAdded(object sender, NewBlockAddedEventArgs e)
@@ -223,6 +216,6 @@ namespace dax.Gui
             task.GetAwaiter().OnCompleted(RefreshConnectionStatus);
         }
 
-        #endregion   
+        #endregion
     }
 }
