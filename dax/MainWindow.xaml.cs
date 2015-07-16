@@ -20,7 +20,6 @@ namespace dax
         private const String TITLE_TEMPLATE_WITH_DOCUMENT = "DAta eXplorer - [{0}] - ver{1}";
         private const String TITLE_TEMPLATE = "DAta eXplorer - ver{0}";
         private const String TITLE_MESSAGE_BOX = "Data Explorer";
-        private const String TAB_ITEM_HEADER = "{0} [{1}]";
         private readonly TabItem _addnewTabItem;
         private readonly TabItem _aboutTabItem;
         private readonly TabItem _startUpTabItem;
@@ -71,10 +70,11 @@ namespace dax
                 daxManager.OnQueryProvider += DaxManager_OnQueryProvider;
 
                 var tabItemControl = new TabDocumentControl(daxManager, this);
-                tabItemControl.OnCloseDocument += TabItemControl_OnCloseDocument;
                 var item = new TabItem();
                 item.Tag = daxManager;
-                item.Header = daxManager.DocumentName;
+                var tabHeader = new TabHeader(daxManager.DocumentName);
+                tabHeader.OnClose += TabHeader_OnClose;
+                item.Header = tabHeader;
                 item.Content = tabItemControl;
 
                 // add new tab just before adding tab
@@ -89,7 +89,7 @@ namespace dax
                 ShowError(ex.Message);
                 RefreshTabsView();
             }
-        }        
+        }                
 
         private void RefreshTabsView()
         {
@@ -143,7 +143,7 @@ namespace dax
                 if (_providerMapping.ContainsKey(doc.Manager))
                 {
                     var provider = _providerMapping[doc.Manager];
-                    currentTabItem.Header = String.Format(TAB_ITEM_HEADER, doc.Manager.DocumentName, provider.Connection.Format());
+                    ((TabHeader)currentTabItem.Header).Connection = provider.Connection.Format();
                 }
             }
         }
@@ -210,17 +210,7 @@ namespace dax
             {
                 SelectFirstDocument();
             }
-        }
-
-        private void TabItemControl_OnCloseDocument(object sender, EventArgs e)
-        {
-            var tabItem = CurrentDocumentTabItems.FirstOrDefault(p => p.Content == sender);
-
-            if (tabItem != null)
-            {
-                tabControlMain.Items.Remove(tabItem);
-            }
-        }
+        }        
 
         private void TextBlockAbout_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
@@ -250,6 +240,16 @@ namespace dax
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _connectionRepository.Load();
+        }
+
+        private void TabHeader_OnClose(object sender, EventArgs e)
+        {
+            var tabItem = CurrentDocumentTabItems.FirstOrDefault(p => p.Header == sender);
+
+            if (tabItem != null)
+            {
+                tabControlMain.Items.Remove(tabItem);
+            }
         }
 
         #endregion
