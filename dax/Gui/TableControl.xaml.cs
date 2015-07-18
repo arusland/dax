@@ -3,7 +3,9 @@ using dax.Document;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace dax.Gui
 {
@@ -105,6 +107,19 @@ namespace dax.Gui
             System.Windows.Forms.Clipboard.SetText(CLEAR_PATTERN.Replace(_queryBlock.QueryText, " ").Trim());
         }
 
-        #endregion
+        private void GridTable_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            if (!e.Handled)
+            {
+                e.Handled = true;
+                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
+                eventArg.RoutedEvent = UIElement.MouseWheelEvent;
+                eventArg.Source = sender;
+                var parent = ((Control)sender).Parent as UIElement;
+                parent.RaiseEvent(eventArg);
+            }
+        }
+
+        #endregion        
     }
 }

@@ -31,6 +31,7 @@
             CanUserAddRows="False"
             CanUserDeleteRows="False"
             CanUserReorderColumns="False"
+            PreviewMouseWheel="GridTable_PreviewMouseWheel"
             IsReadOnly="True" />
 
         <TextBlock

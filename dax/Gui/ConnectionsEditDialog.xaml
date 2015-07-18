@@ -23,6 +23,7 @@
             x:Name="listConnections"
             Grid.RowSpan="2"
             Margin="5"
+            FontSize="17"
             MouseDoubleClick="ListConnections_MouseDoubleClick" SelectionChanged="ListConnections_SelectionChanged" />
 
         <StackPanel
