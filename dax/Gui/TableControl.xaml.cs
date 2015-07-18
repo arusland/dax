@@ -22,7 +22,7 @@ namespace dax.Gui
             _queryBlock = queryBlock;
             _notificationView = notificationView;
             Title = block.Title;
-            labelTitle.ToolTip = CLEAR_PATTERN.Replace(queryBlock.QueryText, " ").Trim();
+            labelTitle.ToolTip = CLEAR_PATTERN.Replace(_queryBlock.QueryText, " ").Trim();          
             RefreshPaging();
         }
 
@@ -81,15 +81,28 @@ namespace dax.Gui
 
         #region Event Handlers
 
+        private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var menu = new ContextMenu();
+            var menuItem = new MenuItem() { Header = "Copy SQL" };
+            menuItem.Click += MenuItemCopySQL_Click;
+            menu.Items.Add(menuItem);
+            labelTitle.ContextMenu = menu;
+        }
+
         private void buttonPrev_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             PrevPage();
         }
 
-
         private void buttonNext_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             NextPage();
+        }
+
+        private void MenuItemCopySQL_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            System.Windows.Forms.Clipboard.SetText(CLEAR_PATTERN.Replace(_queryBlock.QueryText, " ").Trim());
         }
 
         #endregion
