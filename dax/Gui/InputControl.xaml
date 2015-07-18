@@ -12,15 +12,20 @@
                 Margin="5"
                 VerticalAlignment="Center"
                 Checked="checkBoxEnabled_CheckedChanged"
-                Unchecked="checkBoxEnabled_CheckedChanged"
-                IsChecked="True" />
+                Content="Value Name"
+                IsChecked="True"
+                Unchecked="checkBoxEnabled_CheckedChanged" />
             <TextBox
                 x:Name="textBoxValue"
                 x:FieldModifier="private"
                 Height="23"
                 MinWidth="100"
-                Margin="3" 
-                PreviewKeyUp="textBoxValue_PreviewKeyUp"/>
+                Margin="3"
+                PreviewKeyUp="textBoxValue_PreviewKeyUp" />
+            <CheckBox
+                x:Name="checkBoxValue"
+                Margin="3"
+                VerticalAlignment="Center" />
         </StackPanel>
     </Grid>
 </UserControl>

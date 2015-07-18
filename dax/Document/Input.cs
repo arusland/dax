@@ -4,6 +4,8 @@ namespace dax.Document
 {
     public class Input
     {
+        private const String BOOL_TYPE = "bool";
+
         public Input(String name, String title, String type, bool allowBlank)
         {
             Name = name;
@@ -34,6 +36,14 @@ namespace dax.Document
         {
             get;
             private set;
+        }
+
+        public bool IsBoolType
+        {
+            get
+            {
+                return BOOL_TYPE == Type;
+            }
         }
 
         public override String ToString()

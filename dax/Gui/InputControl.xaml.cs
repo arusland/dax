@@ -1,5 +1,6 @@
 ﻿using dax.Document;
 using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -9,6 +10,7 @@ namespace dax.Gui
     {
         private readonly Input _input;
         public event EventHandler<EventArgs> OnSubmit;
+
         public InputControl(Input input)
         {
             InitializeComponent();
@@ -33,11 +35,23 @@ namespace dax.Gui
         {
             get
             {
+                if (_input.IsBoolType)
+                {
+                    return checkBoxValue.IsChecked == true ? "1" : "0";
+                }
+
                 return textBoxValue.Text;
             }
             set
             {
-                textBoxValue.Text = value;
+                if (_input.IsBoolType)
+                {
+                    checkBoxValue.IsChecked = "1" == value;
+                }
+                else
+                {
+                    textBoxValue.Text = value;
+                }
             }
         }
 
@@ -73,7 +87,10 @@ namespace dax.Gui
         {
             if (checkBoxEnabled != null && textBoxValue != null)
             {
+                checkBoxValue.IsEnabled = 
                 textBoxValue.IsEnabled = checkBoxEnabled.IsChecked == true;
+                textBoxValue.Visibility = _input.IsBoolType ? Visibility.Collapsed : Visibility.Visible;
+                checkBoxValue.Visibility = _input.IsBoolType ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

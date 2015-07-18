@@ -6,8 +6,8 @@
 	<input>
 		<field name="OBJECT_NAME" title="Object name" allowBlank="false"/>
 		<field name="VIEW_NAME" title="View name"/>
-		<field name="TABLE_NAME" title="Table name" allowBlank="false"/>		
-		<field name="XXX_NAME" title="PPP name" allowBlank="false"/>		
+		<field name="TABLE_NAME" title="Table name" allowBlank="false"/>
+		<field name="ISMS_SHIPPED" title="is_ms_shipped" type="bool"/>
 	</input>
 
 	<scope version="x.x">
@@ -17,10 +17,10 @@
 			</query>
 		</block>
 
-		<block title="All views" showOnEmpty="false">
+		<block title="All views" showOnEmpty="true">
 			<query>
 				select * from sys.all_views
-				where name like '%{{VIEW_NAME}}%'
+				where name like '%{{VIEW_NAME}}%' [[and is_ms_shipped = {{ISMS_SHIPPED}}]]
 			</query>
 		</block>	
 
