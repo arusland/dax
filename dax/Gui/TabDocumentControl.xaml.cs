@@ -90,6 +90,44 @@ namespace dax.Gui
             RefreshConnectionStatus();
         }
 
+        public void InvokeSearch()
+        {
+            if (_currentState == OperationState.Ready)
+            {
+                var inputs = InputControls.Where(p => p.IsSelected)
+                                .Where(p => p.Context.AllowBlank || !String.IsNullOrEmpty(p.InputValue))
+                                .ToList();
+
+                _notificationView.SetStatus("Loading...");
+                buttonSearch.IsEnabled = false;
+                var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
+                var task = _daxManager.ReloadAsync(inputValues);
+                task.GetAwaiter().OnCompleted(() =>
+                {
+                    if (_currentState == OperationState.Canceling)
+                    {
+                        _notificationView.SetStatus("Operation canceled by user");
+                    }
+                    else
+                    {
+                        _notificationView.SetStatus(String.Empty);
+                    }
+
+                    CurrentState = OperationState.Ready;
+                });
+                CurrentState = OperationState.Searching;
+            }
+        }
+
+        public void InvokeCancelSearch()
+        {
+            if (_currentState == OperationState.Searching)
+            {
+                _notificationView.SetStatus("Canceling...");
+                CurrentState = OperationState.Canceling;
+            }
+        }
+
         private void RefreshConnectionStatus()
         {
             buttonReconnect.Content = _daxManager.IsConnected ? "Reconnect" : "Connect";
@@ -160,41 +198,12 @@ namespace dax.Gui
             }
             else if (_currentState == OperationState.Searching)
             {
-                _notificationView.SetStatus("Canceling...");
-                CurrentState = OperationState.Canceling;
+                InvokeCancelSearch();
             }
 
             RefreshConnectionStatus();
         }
 
-        private void InvokeSearch()
-        {
-            if (_currentState == OperationState.Ready)
-            {
-                var inputs = InputControls.Where(p => p.IsSelected)
-                                .Where(p => p.Context.AllowBlank || !String.IsNullOrEmpty(p.InputValue))
-                                .ToList();
-
-                _notificationView.SetStatus("Loading...");
-                buttonSearch.IsEnabled = false;
-                var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
-                var task = _daxManager.ReloadAsync(inputValues);
-                task.GetAwaiter().OnCompleted(() =>
-                {
-                    if (_currentState == OperationState.Canceling)
-                    {
-                        _notificationView.SetStatus("Operation canceled by user");
-                    }
-                    else
-                    {
-                        _notificationView.SetStatus(String.Empty);
-                    }
-
-                    CurrentState = OperationState.Ready;
-                });
-                CurrentState = OperationState.Searching;
-            }
-        }
         private void DaxManager_OnNewBlockAdded(object sender, NewBlockAddedEventArgs e)
         {
             var tableitem = new TableControl(e.Block, e.QueryBlock, _notificationView);

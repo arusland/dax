@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace dax
 {
@@ -156,6 +157,35 @@ namespace dax
             }
         }
 
+        private void AddHotKeys()
+        {
+            RoutedCommand openDocCmd = new RoutedCommand();
+            openDocCmd.InputGestures.Add(new KeyGesture(Key.O, ModifierKeys.Control));
+            CommandBindings.Add(new CommandBinding(openDocCmd, OpenNewDocumentHandler));
+
+            RoutedCommand searchCmd = new RoutedCommand();
+            searchCmd.InputGestures.Add(new KeyGesture(Key.F5));
+            CommandBindings.Add(new CommandBinding(searchCmd, SearchHandler));
+
+            RoutedCommand cancelSearchCmd = new RoutedCommand();
+            cancelSearchCmd.InputGestures.Add(new KeyGesture(Key.Escape));
+            CommandBindings.Add(new CommandBinding(cancelSearchCmd, CancelSearchHandler));
+        }
+
+        private void OpenNewDocumentCommand()
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                OpenDocument(openFileDialog.FileName);
+            }
+            else
+            {
+                SelectFirstDocument();
+            }
+        }
+
         #region INotificationView interface
 
         public void SetStatus(string text)
@@ -220,24 +250,50 @@ namespace dax
             }
         }
 
-        private void TextBlockAbout_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void TextBlockAbout_MouseUp(object sender, MouseButtonEventArgs e)
         {
             AboutBox.Show(this);
             SelectFirstDocument();
         }
 
-        private void TextBlockNewtab_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void OpenNewDocumentHandler(object sender, ExecutedRoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            OpenNewDocumentCommand();
+        }
 
-            if (openFileDialog.ShowDialog() == true)
+        private void CancelSearchHandler(object sender, ExecutedRoutedEventArgs e)
+        {
+            var currentTabItem = (TabItem)tabControlMain.SelectedItem;
+
+            if (currentTabItem != null)
             {
-                OpenDocument(openFileDialog.FileName);
+                var doc = currentTabItem.Content as TabDocumentControl;
+
+                if (doc != null)
+                {
+                    doc.InvokeCancelSearch();
+                }
             }
-            else
+        }
+
+        private void SearchHandler(object sender, ExecutedRoutedEventArgs e)
+        {
+            var currentTabItem = (TabItem)tabControlMain.SelectedItem;
+
+            if (currentTabItem != null)
             {
-                SelectFirstDocument();
+                var doc = currentTabItem.Content as TabDocumentControl;
+
+                if (doc != null)
+                {
+                    doc.InvokeSearch();
+                }
             }
+        }
+
+        private void TextBlockNewtab_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            OpenNewDocumentCommand();
         }
 
         private void Window_Closed(object sender, EventArgs e)
@@ -248,6 +304,7 @@ namespace dax
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _connectionRepository.Load();
+            AddHotKeys();
         }
 
         private void TabHeader_OnClose(object sender, EventArgs e)
