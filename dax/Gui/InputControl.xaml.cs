@@ -23,6 +23,10 @@ namespace dax.Gui
             {
                 return checkBoxEnabled.IsChecked == true;
             }
+            set
+            {
+                checkBoxEnabled.IsChecked = value;
+            }
         }
 
         public String InputValue
@@ -30,6 +34,10 @@ namespace dax.Gui
             get
             {
                 return textBoxValue.Text;
+            }
+            set
+            {
+                textBoxValue.Text = value;
             }
         }
 

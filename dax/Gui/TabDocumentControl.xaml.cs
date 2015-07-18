@@ -67,6 +67,7 @@ namespace dax.Gui
 
         public void ReloadDocument()
         {
+            var oldInputs = InputControls.ToList();
             InitGrids();
 
             foreach (var input in _daxManager.Inputs)
@@ -74,6 +75,14 @@ namespace dax.Gui
                 var inputControl = new InputControl(input);
                 inputControl.OnSubmit += (s, e) => InvokeSearch();
                 AddInputField(inputControl);
+
+                var oldInput = oldInputs.FirstOrDefault(p => p.InputName == inputControl.InputName);
+
+                if (oldInput != null)
+                {
+                    inputControl.IsSelected = oldInput.IsSelected;
+                    inputControl.InputValue = oldInput.InputValue;
+                }
             }
 
             RefreshState();
