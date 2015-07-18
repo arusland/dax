@@ -71,18 +71,19 @@ namespace dax.Managers
                     {
                         long lastFileTime = GetFileLastTime(e.FullPath);
                         fileChanged = _fileNames[e.FullPath] != lastFileTime;
-
-                        if (fileChanged)
-                        {
-                            _fileNames[e.FullPath] = lastFileTime;
-                        }
                     }
                 }
 
                 if (fileChanged)
                 {
                     RunOnUIContext(() => OnFileChanged(this, new FileChangedEventArgs(e.FullPath)));
-                }
+
+                    lock (_fileNames)
+                    {
+                        long lastFileTime = GetFileLastTime(e.FullPath);
+                        _fileNames[e.FullPath] = lastFileTime;
+                    }
+                }                
             }
         }
 
