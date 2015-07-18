@@ -3,6 +3,7 @@ using dax.Core.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace dax.Gui
@@ -215,16 +216,26 @@ namespace dax.Gui
             _notificationView.ShowError(e.Message);
         }
 
-        private void ButtonReconnect_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void ButtonReconnect_Click(object sender, RoutedEventArgs e)
         {
             var task = _daxManager.Reconnect();
 
             task.GetAwaiter().OnCompleted(RefreshConnectionStatus);
         }
 
-        private void ButtonReload_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void ButtonReload_Click(object sender, RoutedEventArgs e)
         {
             ReloadFile();
+        }
+
+        private void SelectAll_Cliked(object sender, RoutedEventArgs e)
+        {
+            InputControls.ToList().ForEach(p => p.IsSelected = true);
+        }
+
+        private void SelectNone_Cliked(object sender, RoutedEventArgs e)
+        {
+            InputControls.ToList().ForEach(p => p.IsSelected = false);
         }
 
         #endregion
