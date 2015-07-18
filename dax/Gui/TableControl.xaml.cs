@@ -24,7 +24,7 @@ namespace dax.Gui
             _queryBlock = queryBlock;
             _notificationView = notificationView;
             Title = block.Title;
-            labelTitle.ToolTip = CLEAR_PATTERN.Replace(_queryBlock.QueryText, " ").Trim();          
+            labelTitle.ToolTip = CLEAR_PATTERN.Replace(_queryBlock.QueryText, " ").Trim();
             RefreshPaging();
         }
 
@@ -120,6 +120,12 @@ namespace dax.Gui
             }
         }
 
-        #endregion        
+        private void GridTable_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
+        {
+            string header = e.Column.Header.ToString();
+            e.Column.Header = header.Replace("_", "__"); // fucking workaround! 
+        }
+
+        #endregion
     }
 }

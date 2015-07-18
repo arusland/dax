@@ -67,11 +67,11 @@ namespace dax.Gui
         {
             get
             {
-                return checkBoxEnabled.Content.ToString();
+                return labelName.Text;
             }
             private set
             {
-                checkBoxEnabled.Content = value;
+                labelName.Text = value;
             }
         }
 

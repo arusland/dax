@@ -12,9 +12,10 @@
                 Margin="5"
                 VerticalAlignment="Center"
                 Checked="checkBoxEnabled_CheckedChanged"
-                Content="Value Name"
                 IsChecked="True"
-                Unchecked="checkBoxEnabled_CheckedChanged" />
+                Unchecked="checkBoxEnabled_CheckedChanged">
+                <TextBlock x:Name="labelName">Value Name</TextBlock>
+            </CheckBox>
             <TextBox
                 x:Name="textBoxValue"
                 x:FieldModifier="private"

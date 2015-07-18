@@ -32,6 +32,7 @@
             CanUserDeleteRows="False"
             CanUserReorderColumns="False"
             PreviewMouseWheel="GridTable_PreviewMouseWheel"
+            AutoGeneratingColumn="GridTable_AutoGeneratingColumn"
             IsReadOnly="True" />
 
         <TextBlock
