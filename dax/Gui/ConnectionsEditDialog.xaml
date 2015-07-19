@@ -5,6 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Height="400"
     Width="500"
+    MinHeight="300"
+    MinWidth="300"
     Icon="/dax;component/Images/dax.ico"
     Loaded="Window_Loaded"
     ShowInTaskbar="False"

@@ -61,7 +61,8 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Click="ButtonReload_Click"
-                    Content="Reload" />
+                    Content="Reload"
+                    ToolTip="Reload file" />
 
                 <Button
                     x:Name="buttonReconnect"
@@ -70,7 +71,8 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Click="ButtonReconnect_Click"
-                    Content="Reconnect" />
+                    Content="Reconnect"
+                    ToolTip="Change connection" />
 
                 <Button
                     x:Name="buttonSearch"
