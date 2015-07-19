@@ -104,8 +104,9 @@ namespace dax.Document
         {
             var items = doc.GetNodes("project/input/field")
                 .Select(p => new Input(p.GetAttribute("name"),
-                        p.GetAttribute("title"), 
-                        p.GetSafeAttribute("type"), 
+                        p.GetAttribute("title"),
+                        p.GetSafeAttribute("type"),
+                        p.GetSafeAttribute("default", ""), 
                         bool.Parse(p.GetSafeAttribute("allowBlank", "true"))))
                 .ToList();
 

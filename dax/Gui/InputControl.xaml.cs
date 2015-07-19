@@ -16,6 +16,7 @@ namespace dax.Gui
             InitializeComponent();
             _input = input;
             InputTitle = _input.Title;
+            InputValue = _input.DefaultValue;
             RefreshView();
         }
 
@@ -81,13 +82,13 @@ namespace dax.Gui
             {
                 return _input;
             }
-        }        
+        }
 
         private void RefreshView()
         {
             if (checkBoxEnabled != null && textBoxValue != null)
             {
-                checkBoxValue.IsEnabled = 
+                checkBoxValue.IsEnabled =
                 textBoxValue.IsEnabled = checkBoxEnabled.IsChecked == true;
                 textBoxValue.Visibility = _input.IsBoolType ? Visibility.Collapsed : Visibility.Visible;
                 checkBoxValue.Visibility = _input.IsBoolType ? Visibility.Visible : Visibility.Collapsed;
@@ -95,7 +96,7 @@ namespace dax.Gui
         }
 
         #region Event Handlers
-        
+
         private void checkBoxEnabled_CheckedChanged(object sender, System.Windows.RoutedEventArgs e)
         {
             RefreshView();
