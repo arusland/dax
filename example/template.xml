@@ -17,23 +17,26 @@
 			</query>
 		</block>
 
-		<block title="All views" showOnEmpty="true">
+		<block title="All views" showOnEmpty="true">			
 			<query>
 				select * from sys.all_views
 				where name like '%{{VIEW_NAME}}%' [[and is_ms_shipped = {{ISMS_SHIPPED}}]]
 			</query>
 		</block>	
 
-		<block title="All tables (withour vars)">
-			<query>
-				select * from information_schema.tables				
-			</query>
-		</block>
-
 		<block title="All columns (conditional)">
+			<bindings>
+				<bind column="TABLE_NAME" field="TABLE_NAME"/>
+			</bindings>
 			<query>
 				select * from information_schema.columns
 				[[where table_name like '%{{TABLE_NAME}}%']]		
+			</query>
+		</block>
+
+		<block title="All tables (withour vars)">			
+			<query>
+				select * from information_schema.tables				
 			</query>
 		</block>
 	</scope>

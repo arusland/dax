@@ -206,13 +206,26 @@ namespace dax.Gui
 
         private void DaxManager_OnNewBlockAdded(object sender, NewBlockAddedEventArgs e)
         {
-            var tableitem = new TableControl(e.Block, e.QueryBlock, _notificationView);
+            var tableItem = new TableControl(e.Block, e.QueryBlock, _notificationView);
+            tableItem.OnBindingClick += OnBinding_Click;
             gridBlocks.RowDefinitions.Add(new RowDefinition());
-            gridBlocks.Children.Add(tableitem);
-            Grid.SetRow(tableitem, gridBlocks.RowDefinitions.Count - 1);
+            gridBlocks.Children.Add(tableItem);
+            Grid.SetRow(tableItem, gridBlocks.RowDefinitions.Count - 1);
 
             e.Canceled = _currentState == OperationState.Canceling;
             RefreshConnectionStatus();
+        }
+
+        private void OnBinding_Click(object sender, Events.BindingClickEventArgs e)
+        {
+            var inputValue = InputControls.FirstOrDefault(p => p.InputName == e.Binding.Field);
+
+            if (inputValue != null)
+            {
+                inputValue.InputValue = e.Value;
+                inputValue.IsSelected = true;
+                InvokeSearch();
+            }
         }
 
         private void DaxManager_OnQueryReloaded(object sender, QueryReloadedEventArgs e)

@@ -14,7 +14,6 @@ namespace dax.Document
         private readonly List<Scope> _scopes = new List<Scope>();
         private readonly FileInfo _currentFile;
         
-        
         private DaxDocument(String file)
         {
             var fileInfo = new FileInfo(file);
@@ -69,21 +68,31 @@ namespace dax.Document
 
         private List<Scope> LoadScopes(XDocument doc)
         {
-            var items = doc.GetNodes("project/scope")
+            var scopes = doc.GetNodes("project/scope")
                 .Select(p => new Scope(p.GetSafeAttribute("version"), LoadBlocks(p)))
                 .ToList();
 
-            return items;
+            return scopes;
         }
 
         private List<Block> LoadBlocks(XElement scope)
         {
-            var items = scope.GetNodes("block")
+            var blocks = scope.GetNodes("block")
                 .Select(p => new Block(p.GetAttribute("title"), LoadQuery(p),
+                    LoadBindings(p),
                     bool.Parse(p.GetSafeAttribute("showOnEmpty", "true"))))
                 .ToList();
 
-            return items;
+            return blocks;
+        }
+
+        private List<Binding> LoadBindings(XElement block)
+        {
+            var binds = block.GetNodes("bindings/bind")
+                .Select(p => new Binding(p.GetAttribute("column"), p.GetAttribute("field")))
+                .ToList();
+
+            return binds;
         }
 
         private Query LoadQuery(XElement block)

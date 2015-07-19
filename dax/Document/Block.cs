@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace dax.Document
 {
     public class Block
     {
-        public Block(String title, Query query, bool showOnEmpty)
+        public Block(String title, Query query, IEnumerable<Binding> bindings, bool showOnEmpty)
         {
             Title = title;
             Query = query;
             ShowOnEmpty = showOnEmpty;
+            Bindings = bindings.ToList();
         }                
 
         public String Title
@@ -25,6 +27,12 @@ namespace dax.Document
         }
 
         public Query Query
+        {
+            get;
+            private set;
+        }
+
+        public IEnumerable<Binding> Bindings
         {
             get;
             private set;

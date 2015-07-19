@@ -79,6 +79,7 @@
     <Compile Include="Db\SqlServer\SqlServerConnection.cs" />
     <Compile Include="Db\SqlServer\SqlServerProvider.cs" />
     <Compile Include="Db\SqlServer\SqlServerQueryBlock.cs" />
+    <Compile Include="Document\Binding.cs" />
     <Compile Include="Document\QueryBasic.cs" />
     <Compile Include="Document\QueryContainer.cs" />
     <Compile Include="Extensions\ConnectionExtensions.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Gui\ConnectionsEditDialog.xaml.cs">
       <DependentUpon>ConnectionsEditDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\Events\BindingClickEventArgs.cs" />
     <Compile Include="Gui\INotificationView.cs" />
     <Compile Include="Gui\InputControl.xaml.cs">
       <DependentUpon>InputControl.xaml</DependentUpon>

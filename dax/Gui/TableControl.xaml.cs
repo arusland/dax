@@ -1,11 +1,15 @@
 ﻿using dax.Db;
-using dax.Document;
+using dax.Gui.Events;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace dax.Gui
 {
@@ -13,10 +17,10 @@ namespace dax.Gui
     {
         private readonly Regex CLEAR_PATTERN = new Regex(@"[\t ]+");
         private readonly IQueryBlock _queryBlock;
-        private readonly Block _block;
+        private readonly dax.Document.Block _block;
         private readonly INotificationView _notificationView;
 
-        public TableControl(Block block, IQueryBlock queryBlock, INotificationView notificationView)
+        public TableControl(dax.Document.Block block, IQueryBlock queryBlock, INotificationView notificationView)
         {
             InitializeComponent();
 
@@ -122,10 +126,48 @@ namespace dax.Gui
 
         private void GridTable_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
-            string header = e.Column.Header.ToString();
-            e.Column.Header = header.Replace("_", "__"); // fucking workaround! 
+            var binding =_block.Bindings.FirstOrDefault(p => p.Column == e.PropertyName);
+
+            if (binding == null)
+            {
+                string header = e.Column.Header.ToString();
+                e.Column.Header = header.Replace("_", "__"); // fucking workaround! 
+            }
+            else 
+            {
+                var templateColumn = new DataGridTemplateColumn();
+                templateColumn.Header = e.Column.Header.ToString().Replace("_", "__");
+                e.Column = templateColumn;
+
+                DataTemplate cellLayout = new DataTemplate();
+                FrameworkElementFactory spFactory = new FrameworkElementFactory(typeof(TextBlock));
+                cellLayout.VisualTree = spFactory;
+
+                FrameworkElementFactory hyperLinkLayout = new FrameworkElementFactory(typeof(Hyperlink));
+                hyperLinkLayout.AddHandler(Hyperlink.ClickEvent, new RoutedEventHandler((Object s, RoutedEventArgs ea) => Hyperlink_Click(binding, ea)));
+                spFactory.AppendChild(hyperLinkLayout);
+
+                FrameworkElementFactory innerBlockLayout = new FrameworkElementFactory(typeof(TextBlock));
+                innerBlockLayout.SetBinding(TextBlock.TextProperty, new Binding(e.PropertyName));
+                hyperLinkLayout.AppendChild(innerBlockLayout);
+
+                templateColumn.CellTemplate = cellLayout;
+            }
+        }
+
+        private void Hyperlink_Click(dax.Document.Binding binding, RoutedEventArgs e)
+        {
+            if (OnBindingClick != null)
+            {
+                Hyperlink hl = e.OriginalSource as Hyperlink;
+                ContainerVisual container = (ContainerVisual)VisualTreeHelper.GetChild(hl.Parent as TextBlock, 0);
+                String value = (container.Children[0] as TextBlock).Text;
+                OnBindingClick(this, new BindingClickEventArgs(binding, value));
+            }
         }
 
         #endregion
+
+        public EventHandler<BindingClickEventArgs> OnBindingClick;
     }
 }

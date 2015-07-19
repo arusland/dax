@@ -28,12 +28,12 @@
             Grid.Row="1"
             Margin="20,5,5,5"
             AutoGenerateColumns="True"
+            AutoGeneratingColumn="GridTable_AutoGeneratingColumn"
             CanUserAddRows="False"
             CanUserDeleteRows="False"
             CanUserReorderColumns="False"
-            PreviewMouseWheel="GridTable_PreviewMouseWheel"
-            AutoGeneratingColumn="GridTable_AutoGeneratingColumn"
-            IsReadOnly="True" />
+            IsReadOnly="True"
+            PreviewMouseWheel="GridTable_PreviewMouseWheel" />
 
         <TextBlock
             x:Name="labelLoading"
