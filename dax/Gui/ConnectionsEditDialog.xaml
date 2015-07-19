@@ -5,9 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     Height="400"
     Width="500"
+    Icon="/dax;component/Images/dax.ico"
     Loaded="Window_Loaded"
     ShowInTaskbar="False"
-    WindowStartupLocation="CenterOwner" Icon="/dax;component/Images/dax.ico">
+    WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -24,7 +25,9 @@
             Grid.RowSpan="2"
             Margin="5"
             FontSize="17"
-            MouseDoubleClick="ListConnections_MouseDoubleClick" SelectionChanged="ListConnections_SelectionChanged" />
+            MouseDoubleClick="ListConnections_MouseDoubleClick"
+            SelectionChanged="ListConnections_SelectionChanged" 
+            KeyUp="ListConnections_KeyUp"/>
 
         <StackPanel
             Grid.Column="1"
@@ -62,7 +65,8 @@
                 Margin="5,5,5,5"
                 VerticalAlignment="Bottom"
                 Click="ButtonSelect_Click"
-                Content="Select" FontWeight="Bold" />
+                Content="Select"
+                FontWeight="Bold" />
         </StackPanel>
     </Grid>
 </Window>

@@ -4,6 +4,7 @@ using dax.Extensions;
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 
 namespace dax.Gui
 {
@@ -36,7 +37,14 @@ namespace dax.Gui
             {
                 listConnections.Items.Add(connection);
             }
+
+            if (listConnections.Items.Count > 0)
+            {
+                listConnections.SelectedIndex = 0;
+            }
+
             RefreshControls();
+            listConnections.Focus();
         }
 
         private void TrySelectConnection()
@@ -129,6 +137,14 @@ namespace dax.Gui
         private void ListConnections_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             RefreshControls();
+        }
+
+        private void ListConnections_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                TrySelectConnection();
+            }
         }
 
         #endregion
