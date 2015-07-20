@@ -94,9 +94,13 @@ namespace dax.Gui
         {
             if (_currentState == OperationState.Ready)
             {
+                InputControls.ToList().ForEach(p => p.IsHighlighted = false);
+
                 var inputs = InputControls.Where(p => p.IsSelected)
                                 .Where(p => p.Context.AllowBlank || !String.IsNullOrEmpty(p.InputValue))
                                 .ToList();
+
+                inputs.ForEach(p => p.IsHighlighted = true);
 
                 _notificationView.SetStatus("Loading...");
                 buttonSearch.IsEnabled = false;

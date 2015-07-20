@@ -3,6 +3,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace dax.Gui
 {
@@ -10,6 +11,7 @@ namespace dax.Gui
     {
         private readonly Input _input;
         public event EventHandler<EventArgs> OnSubmit;
+        private static Brush _hightlightBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0xCB, 0xF5, 0xD6));
 
         public InputControl(Input input)
         {
@@ -83,6 +85,21 @@ namespace dax.Gui
                 return _input;
             }
         }
+
+        public bool IsHighlighted
+        {
+            get
+            {
+                return textBoxValue.Background == _hightlightBrush;
+            }
+            set
+            {
+                var brush = value ? _hightlightBrush : Brushes.Transparent;
+                textBoxValue.Background = brush;
+                checkBoxValue.Background = brush;
+            }
+        }
+
 
         private void RefreshView()
         {
