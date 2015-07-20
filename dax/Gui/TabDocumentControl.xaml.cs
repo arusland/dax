@@ -218,7 +218,7 @@ namespace dax.Gui
 
         private void OnBinding_Click(object sender, Events.BindingClickEventArgs e)
         {
-            var inputValue = InputControls.FirstOrDefault(p => p.InputName == e.Binding.Field);
+            var inputValue = InputControls.FirstOrDefault(p => String.Compare(p.InputName, e.Binding.Field, true) == 0);
 
             if (inputValue != null)
             {

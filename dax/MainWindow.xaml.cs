@@ -19,8 +19,8 @@ namespace dax
 {
     public partial class MainWindow : Window, INotificationView
     {
-        private const String TITLE_TEMPLATE_WITH_DOCUMENT = "DAta eXplorer - [{0}] - ver {1}";
-        private const String TITLE_TEMPLATE = "DAta eXplorer - ver {0}";
+        private const String TITLE_TEMPLATE_WITH_DOCUMENT = "DAta eXplorer - [{0}] - ver {1} [BETA]";
+        private const String TITLE_TEMPLATE = "DAta eXplorer - ver {0} [BETA]";
         private const String TITLE_MESSAGE_BOX = "Data Explorer";
 
         private readonly TabItem _addnewTabItem;
