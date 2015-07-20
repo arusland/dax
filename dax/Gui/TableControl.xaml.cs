@@ -1,6 +1,7 @@
 ﻿using dax.Db;
 using dax.Gui.Events;
 using System;
+using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -89,11 +90,31 @@ namespace dax.Gui
 
         private void UserControl_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            var menu = new ContextMenu();
-            var menuItem = new MenuItem() { Header = "Copy SQL" };
-            menuItem.Click += MenuItemCopySQL_Click;
-            menu.Items.Add(menuItem);
-            labelTitle.ContextMenu = menu;
+            var menuCopySQL = new ContextMenu();
+            var menuItemCopySQL = new MenuItem() { Header = "Copy SQL" };
+            menuItemCopySQL.Click += MenuItemCopySQL_Click;
+            menuCopySQL.Items.Add(menuItemCopySQL);
+            labelTitle.ContextMenu = menuCopySQL;
+
+            var menuCopySelectedCell = new ContextMenu();
+            var menuItemCopySelectedCell = new MenuItem() { Header = "Copy Value" };
+            menuCopySelectedCell.Items.Add(menuItemCopySelectedCell);
+            menuItemCopySelectedCell.Click += MenuItemCopyValue_Click;
+
+            gridTable.ContextMenu = menuCopySelectedCell;
+        }
+
+        private void MenuItemCopyValue_Click(object sender, RoutedEventArgs e)
+        {
+            DataRowView dataRow = (DataRowView)gridTable.SelectedItem;
+
+            if (dataRow != null && gridTable.CurrentCell != null)
+            {
+                int index = gridTable.CurrentCell.Column.DisplayIndex;
+                string cellValue = dataRow.Row.ItemArray[index].ToString();
+
+                System.Windows.Forms.Clipboard.SetText(cellValue);
+            }
         }
 
         private void buttonPrev_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -126,14 +147,14 @@ namespace dax.Gui
 
         private void GridTable_AutoGeneratingColumn(object sender, DataGridAutoGeneratingColumnEventArgs e)
         {
-            var binding =_block.Bindings.FirstOrDefault(p => p.Column == e.PropertyName);
+            var binding = _block.Bindings.FirstOrDefault(p => p.Column == e.PropertyName);
 
             if (binding == null)
             {
                 string header = e.Column.Header.ToString();
                 e.Column.Header = header.Replace("_", "__"); // fucking workaround! 
             }
-            else 
+            else
             {
                 var templateColumn = new DataGridTemplateColumn();
                 templateColumn.Header = e.Column.Header.ToString().Replace("_", "__");
