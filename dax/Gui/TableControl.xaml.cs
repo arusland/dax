@@ -51,6 +51,7 @@ namespace dax.Gui
             labelLoading.Visibility = enable ? System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible;
             buttonNext.IsEnabled = enable;
             buttonPrev.IsEnabled = enable;
+            textBoxCurrentPage.IsEnabled = enable;
         }
 
         private void NextPage()
@@ -83,7 +84,7 @@ namespace dax.Gui
         private void RefreshPaging()
         {
             gridTable.ItemsSource = _queryBlock.Table.DefaultView;
-            labelCurrentPage.Text = (_queryBlock.PageIndex + 1).ToString();
+            textBoxCurrentPage.Text = (_queryBlock.PageIndex + 1).ToString();
         }
 
         #region Event Handlers
@@ -184,6 +185,33 @@ namespace dax.Gui
                 ContainerVisual container = (ContainerVisual)VisualTreeHelper.GetChild(hl.Parent as TextBlock, 0);
                 String value = (container.Children[0] as TextBlock).Text;
                 OnBindingClick(this, new BindingClickEventArgs(binding, value));
+            }
+        }
+
+        private void TextBoxCurrentPage_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                int index;
+
+                if (int.TryParse(textBoxCurrentPage.Text.Trim(), out index))
+                {
+                    index--;
+                }
+                else
+                {
+                    index = 0;
+                }
+
+                _queryBlock.PageIndex = index;
+                EnableControls(false);
+                _queryBlock.UpdateAsync()
+                    .GetAwaiter()
+                    .OnCompleted(() =>
+                        {
+                            RefreshPaging();
+                            EnableControls(true);
+                        });
             }
         }
 

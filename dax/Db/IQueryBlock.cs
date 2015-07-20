@@ -18,6 +18,7 @@ namespace dax.Db
         int PageIndex
         {
             get;
+            set;
         }
 
         bool IsEmpty
@@ -35,6 +36,8 @@ namespace dax.Db
         void NextPage();
 
         void PrevPage();
+
+        Task UpdateAsync();
 
         Task NextPageAsync();
 

@@ -10,6 +10,7 @@ namespace dax.Db.SqlServer
         private readonly String _query;
         private string _connectionString;
         private DataTable _table;
+        private int _pageIndex;
 
         public SqlServerQueryBlock(String query, String _connectionString)
         {
@@ -34,8 +35,14 @@ namespace dax.Db.SqlServer
 
         public int PageIndex
         {
-            get;
-            private set;
+            get
+            {
+                return _pageIndex;
+            }
+            set
+            {
+                _pageIndex = Math.Max(0, value);
+            }
         }
 
         public string QueryText
@@ -46,6 +53,12 @@ namespace dax.Db.SqlServer
         public void Update()
         {
             UpdateInternal();
+        }
+
+        public async Task UpdateAsync()
+        {
+            Task task = Task.Factory.StartNew(Update);
+            await task;
         }
 
         public void NextPage()
@@ -62,10 +75,9 @@ namespace dax.Db.SqlServer
 
         public void PrevPage()
         {
-            PageIndex = Math.Max(0, PageIndex - 1);
+            PageIndex = PageIndex - 1;
             UpdateInternal();
         }
-
 
         public async Task PrevPageAsync()
         {

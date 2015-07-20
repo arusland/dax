@@ -15,6 +15,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
         <TextBlock
             x:Name="labelTitle"
             Grid.Row="0"
@@ -49,17 +53,23 @@
             Orientation="Horizontal">
             <Button
                 x:Name="buttonPrev"
-                Margin="20,0,5,5"
+                Width="30"
+                Margin="20,0,0,5"
                 Click="buttonPrev_Click"
                 Content="&lt;&lt;" />
-            <TextBlock
-                x:Name="labelCurrentPage"
-                Margin="5"
-                VerticalAlignment="Center"
+            <TextBox
+                x:Name="textBoxCurrentPage"
+                Height="23"
+                Width="30"
+                Margin="5,0,5,0"
+                HorizontalContentAlignment="Center"
+                VerticalAlignment="Top"
+                PreviewKeyUp="TextBoxCurrentPage_PreviewKeyUp"
                 Text="1" />
             <Button
                 x:Name="buttonNext"
-                Margin="5,0,5,5"
+                Width="30"
+                Margin="0,0,5,5"
                 Click="buttonNext_Click"
                 Content="&gt;&gt;" />
         </StackPanel>
