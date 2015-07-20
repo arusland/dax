@@ -100,6 +100,12 @@ namespace dax.Gui
             }
         }
 
+        public void Reset()
+        {
+            IsSelected = true;
+            InputValue = _input.DefaultValue;
+            IsHighlighted = false;
+        }
 
         private void RefreshView()
         {

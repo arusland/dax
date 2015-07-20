@@ -47,6 +47,15 @@
                     VerticalAlignment="Top">
                     <Hyperlink Click="SelectNone_Cliked">Select None</Hyperlink>
                 </TextBlock>
+
+                <TextBlock
+                    Grid.Column="1"
+                    Grid.Row="2"
+                    Margin="3"
+                    VerticalAlignment="Top"
+                    ToolTip="Reset all input values">
+                    <Hyperlink Click="Hyperlink_Click">Reset</Hyperlink>
+                </TextBlock>
             </StackPanel>
 
             <StackPanel
