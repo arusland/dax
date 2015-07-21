@@ -61,7 +61,7 @@ If we want to include or exclude some sql-blocks, we can wrap them by doubled sq
     <block title="Sys objects">
       <query>
         select * from sys.objects
-        where name like '%{{OBJECT_NAME}}%' [[and type = '{{OBJECT_TYPE}}']] // <1>
+        where name like '%{{OBJECT_NAME}}%' [[and type = '{{OBJECT_TYPE}}']]
       </query>
     </block>
   </scope>
@@ -83,7 +83,7 @@ Each column of result set can be bound to input field. In the dax, bound column 
   <scope>
     <block title="Sys objects">
       <bindings>
-        <bind column="name" field="OBJECT_NAME"/> // <1>
+        <bind column="name" field="OBJECT_NAME"/>
       </bindings>
       <query>
         select * from sys.objects
@@ -102,12 +102,12 @@ If you want to support all versions of database by single project file, you can 
 ----
 <project name="System Db">
   <props>
-    <prop name="version.query" value="select [version] from version_table"/> // <1>
+    <prop name="version.query" value="select [version] from version_table"/>
   </props>
 
   ...  
 
-  <scope version="1.42"> // <2>
+  <scope version="1.42">
     <block title="Sys objects">
     ...
     </block>
