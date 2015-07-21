@@ -54,7 +54,7 @@
                     Margin="3"
                     VerticalAlignment="Top"
                     ToolTip="Reset all input values">
-                    <Hyperlink Click="Hyperlink_Click">Reset</Hyperlink>
+                    <Hyperlink Click="ResetFilter_Click">Reset</Hyperlink>
                 </TextBlock>
             </StackPanel>
 

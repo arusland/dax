@@ -264,9 +264,10 @@ namespace dax.Gui
             InputControls.ToList().ForEach(p => p.IsSelected = false);
         }
 
-        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        private void ResetFilter_Click(object sender, RoutedEventArgs e)
         {
             InputControls.ToList().ForEach(p => p.Reset());
+            InvokeSearch();
         }
 
         #endregion
