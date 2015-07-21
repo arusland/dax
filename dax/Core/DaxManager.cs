@@ -1,5 +1,6 @@
 ﻿using dax.Core.Events;
 using dax.Db;
+using dax.Db.Exceptions;
 using dax.Document;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace dax.Core
         public event EventHandler<QueryReloadedEventArgs> OnQueryReloaded;
         public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
         public event EventHandler<ErrorEventArgs> OnError;
-        public event EventHandler<QueryProviderEventArgs> OnQueryProvider;        
+        public event EventHandler<QueryProviderEventArgs> OnQueryProvider;
 
         public DaxManager(String filePath, TaskScheduler uiContext)
         {
@@ -60,9 +61,9 @@ namespace dax.Core
             {
                 _document = DaxDocument.Load(_document.FilePath);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                DoErrorEvent(ex.Message);
+                DoErrorEvent(ex);
             }
         }
 
@@ -74,7 +75,7 @@ namespace dax.Core
             }
             catch (Exception ex)
             {
-                DoErrorEvent(ex.Message);
+                DoErrorEvent(ex);
             }
         }
 
@@ -160,9 +161,18 @@ namespace dax.Core
             return ea.Canceled;
         }
 
-        private void DoErrorEvent(String message)
+        private void DoErrorEvent(Exception error)
         {
-            RunOnUIContext(() => OnError(this, new ErrorEventArgs(message)), true);
+            QueryExecuteException queryException = error as QueryExecuteException;
+
+            if (queryException != null)
+            {
+                RunOnUIContext(() => OnError(this, new ErrorEventArgs(queryException.InnerException.Message, queryException.Query)), true);
+            }
+            else
+            {
+                RunOnUIContext(() => OnError(this, new ErrorEventArgs(error.Message)), true);
+            }
         }
 
         private Scope GetScope(String version)

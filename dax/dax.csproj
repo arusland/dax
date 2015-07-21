@@ -75,10 +75,13 @@
     <Compile Include="Db\Connect\IConnection.cs" />
     <Compile Include="Db\Connect\IConnectionRepository.cs" />
     <Compile Include="Db\Connect\IConnectionStringParser.cs" />
+    <Compile Include="Db\Exceptions\BaseDbException.cs" />
+    <Compile Include="Db\Exceptions\QueryExecuteException.cs" />
     <Compile Include="Db\IProviderFactory.cs" />
     <Compile Include="Db\IDbProvider.cs" />
     <Compile Include="Db\IQueryBlock.cs" />
     <Compile Include="Db\ProviderFactory.cs" />
+    <Compile Include="Db\SqlServer\SqlServerErrorDispatcher.cs" />
     <Compile Include="Db\SqlServer\SqlServerConnection.cs" />
     <Compile Include="Db\SqlServer\SqlServerProvider.cs" />
     <Compile Include="Db\SqlServer\SqlServerQueryBlock.cs" />
@@ -120,6 +123,7 @@
     </Compile>
     <Compile Include="Managers\FileChangedEventArgs.cs" />
     <Compile Include="Managers\FileWatcher.cs" />
+    <Compile Include="Utils\QueryUtils.cs" />
     <Compile Include="Utils\VariableUtils.cs" />
     <Compile Include="Utils\VersionUtils.cs" />
     <Page Include="Gui\AboutBox.xaml">

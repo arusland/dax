@@ -239,7 +239,17 @@ namespace dax.Gui
 
         private void DaxManager_OnError(object sender, ErrorEventArgs e)
         {
-            _notificationView.ShowError(e.Message);
+            if (String.IsNullOrEmpty(e.Query))
+            {
+                _notificationView.ShowError(e.Message);
+            }
+            else
+            {
+                String message = String.Format("Failed to execute query: {1}{0}{0}{3}{0}{2}{0}{3}",
+                    Environment.NewLine, e.Message, e.Query, "--------");
+
+                _notificationView.ShowError(message);
+            }
         }
 
         private void ButtonReconnect_Click(object sender, RoutedEventArgs e)

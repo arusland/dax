@@ -35,13 +35,12 @@ namespace dax.Db.SqlServer
                     connection.Close();
                     return result;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    SqlServerErrorDispatcher.Handle(ex, query);
                     throw;
                 }
             }
         }
-
-        
     }
 }

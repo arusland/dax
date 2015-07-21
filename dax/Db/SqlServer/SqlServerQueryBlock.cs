@@ -1,4 +1,6 @@
-﻿using System;
+﻿using dax.Db.Exceptions;
+using dax.Utils;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
@@ -126,6 +128,7 @@ namespace dax.Db.SqlServer
                 }
                 catch (Exception ex)
                 {
+                    SqlServerErrorDispatcher.Handle(ex, _query);
                     throw;
                 }
             }

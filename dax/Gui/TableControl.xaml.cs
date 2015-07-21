@@ -11,12 +11,12 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using dax.Utils;
 
 namespace dax.Gui
 {
     public partial class TableControl : UserControl
     {
-        private readonly Regex CLEAR_PATTERN = new Regex(@"[\t ]+");
         private readonly IQueryBlock _queryBlock;
         private readonly dax.Document.Block _block;
         private readonly INotificationView _notificationView;
@@ -31,7 +31,7 @@ namespace dax.Gui
             Title = block.Title;
             var labelTooltip = new TextBlock()
             {
-                Text = CLEAR_PATTERN.Replace(_queryBlock.QueryText, " ").Trim(),
+                Text = QueryUtils.Normalize(_queryBlock.QueryText),
                 FontSize = 22,
                 Foreground = Brushes.Blue
             };
@@ -136,7 +136,7 @@ namespace dax.Gui
 
         private void MenuItemCopySQL_Click(object sender, System.Windows.RoutedEventArgs e)
         {
-            System.Windows.Forms.Clipboard.SetText(CLEAR_PATTERN.Replace(_queryBlock.QueryText, " ").Trim());
+            System.Windows.Forms.Clipboard.SetText(QueryUtils.Normalize(_queryBlock.QueryText));
         }
 
         private void GridTable_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
