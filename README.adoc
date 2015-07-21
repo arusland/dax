@@ -1,0 +1,121 @@
+= DAX - Data Explorer
+
+*Dax* is open source tool that makes it easy to run predefined sql-queries.
+
+== Notions
+* *Input field* - defined by mandatory attributes (*name* and *title*)
+* *Scope* - set of query blocks. At one time can be run only one scope.
+* *Block* - has *title* and single sql-query. It can have bindings as well. A scope can contains multiple blocks 
+** *Query* - sql-query which contains named input fields. If at least one input field not typed this block cannot be run
+** *Binding* - a pair of names (*column* and *field*) which bind column in result set and Input value
+* *Property* - consists of *name* and *value* in project file
+
+== Project file
+In order to be useful, project file should contain at least one input field and one sql-query.
+
+.Minimal project file
+[source,xml]
+----
+<project name="System Db">
+  <input>
+    <field name="OBJECT_NAME" title="Object name"/>
+  </input>
+
+  <scope>
+    <block title="Sys objects">
+      <query>
+        select * from sys.objects where name like '%{{OBJECT_NAME}}%'
+      </query>
+    </block>
+  </scope>
+</project>
+----
+
+In above example, single block (named "Sys objects") includes sql-query with one input field. If this input field not typed by user, the query cannot be run (will be skipped). Input field must be wrapped by doubled curly braces.
+
+=== Cannot be blank
+By default, input field can be empty and will be used by the dax. In order to suppress such behaviour, we can set *allowBlank* attribute to *false*.
+
+.Suppression of empty input
+[source,xml]
+----
+...
+<input>
+  <field name="OBJECT_NAME" title="Object name" allowBlank="false"/>
+</input>
+...
+----
+
+=== Conditional sql-part
+If we want to include or exclude some sql-blocks, we can wrap them by doubled square brackets. So, block will be included into the query, if all fields inside this block are typed by user.
+
+[source,xml]
+----
+<project name="System Db">
+  <input>
+    <field name="OBJECT_NAME" title="Object name"/>
+    <field name="OBJECT_TYPE" title="Object type" allowBlank="false"/>
+  </input>
+
+  <scope>
+    <block title="Sys objects">
+      <query>
+        select * from sys.objects
+        where name like '%{{OBJECT_NAME}}%' [[and type = '{{OBJECT_TYPE}}']] // <1>
+      </query>
+    </block>
+  </scope>
+</project>
+----
+
+
+=== Bind column to the field
+Each column of result set can be bound to input field. In the dax, bound column represents as clickable link. When you click it, the value of the cell will be set into associated input field.
+
+[source,xml]
+----
+<project name="System Db">
+  <input>
+    <field name="OBJECT_NAME" title="Object name"/>
+    <field name="OBJECT_TYPE" title="Object type" allowBlank="false"/>
+  </input>
+
+  <scope>
+    <block title="Sys objects">
+      <bindings>
+        <bind column="name" field="OBJECT_NAME"/> // <1>
+      </bindings>
+      <query>
+        select * from sys.objects
+        where name like '%{{OBJECT_NAME}}%' [[and type = '{{OBJECT_TYPE}}']]
+      </query>
+    </block>
+  </scope>
+</project>
+----
+
+
+=== Versioning
+If you want to support all versions of database by single project file, you can mark scope by *version* attribute. 
+
+[source,xml]
+----
+<project name="System Db">
+  <props>
+    <prop name="version.query" value="select [version] from version_table"/> // <1>
+  </props>
+
+  ...  
+
+  <scope version="1.42"> // <2>
+    <block title="Sys objects">
+    ...
+    </block>
+  </scope>
+</project>
+----
+
+When the dax finds *"version.query"* property it used (as sql-query) for getting database version and then found scope with the same version.
+
+== License
+link:http://www.apache.org/licenses/LICENSE-2.0[Apache License]
