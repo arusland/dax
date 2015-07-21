@@ -29,7 +29,13 @@ namespace dax.Gui
             _queryBlock = queryBlock;
             _notificationView = notificationView;
             Title = block.Title;
-            labelTitle.ToolTip = CLEAR_PATTERN.Replace(_queryBlock.QueryText, " ").Trim();
+            var labelTooltip = new TextBlock()
+            {
+                Text = CLEAR_PATTERN.Replace(_queryBlock.QueryText, " ").Trim(),
+                FontSize = 22,
+                Foreground = Brushes.Blue
+            };
+            labelTitle.ToolTip = labelTooltip;
             RefreshPaging();
         }
 
