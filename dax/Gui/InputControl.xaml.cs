@@ -96,7 +96,7 @@ namespace dax.Gui
             {
                 var brush = value ? _hightlightBrush : Brushes.Transparent;
                 textBoxValue.Background = brush;
-                checkBoxValue.Background = brush;
+                textBlockWrapper.Background = brush;
             }
         }
 
@@ -114,7 +114,7 @@ namespace dax.Gui
                 checkBoxValue.IsEnabled =
                 textBoxValue.IsEnabled = checkBoxEnabled.IsChecked == true;
                 textBoxValue.Visibility = _input.IsBoolType ? Visibility.Collapsed : Visibility.Visible;
-                checkBoxValue.Visibility = _input.IsBoolType ? Visibility.Visible : Visibility.Collapsed;
+                textBlockWrapper.Visibility = _input.IsBoolType ? Visibility.Visible : Visibility.Collapsed;
             }
         }
 

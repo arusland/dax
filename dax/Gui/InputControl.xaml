@@ -23,10 +23,14 @@
                 MinWidth="100"
                 Margin="3"
                 PreviewKeyUp="textBoxValue_PreviewKeyUp" />
-            <CheckBox
-                x:Name="checkBoxValue"
-                Margin="3"
-                VerticalAlignment="Center" />
+            <TextBlock
+                x:Name="textBlockWrapper"
+                VerticalAlignment="Center">
+                <CheckBox
+                    x:Name="checkBoxValue"
+                    Margin="3"
+                    VerticalAlignment="Center" />
+            </TextBlock>
         </StackPanel>
     </Grid>
 </UserControl>
