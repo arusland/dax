@@ -1,5 +1,5 @@
 ﻿<ctrl:BaseInputControl
-    x:Class="dax.Gui.InputControl"
+    x:Class="dax.Gui.DateInputControl"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -17,13 +17,10 @@
                 Unchecked="checkBoxEnabled_CheckedChanged">
                 <TextBlock x:Name="labelName">Value Name</TextBlock>
             </CheckBox>
-            <TextBox
-                x:Name="textBoxValue"
-                x:FieldModifier="private"
-                Height="23"
-                MinWidth="100"
-                Margin="3"
-                PreviewKeyUp="TextBoxValue_PreviewKeyUp" />
+
+            <DatePicker
+                x:Name="datePicker"
+                Margin="3" />
         </StackPanel>
     </Grid>
 </ctrl:BaseInputControl>

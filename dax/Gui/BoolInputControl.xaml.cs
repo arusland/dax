@@ -1,17 +1,15 @@
 ﻿using dax.Document;
 using System;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace dax.Gui
 {
-    public partial class InputControl : BaseInputControl
+    public partial class BoolInputControl : BaseInputControl
     {
         private readonly Input _input;
         private static Brush _hightlightBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0xCB, 0xF5, 0xD6));
-        public override event EventHandler<EventArgs> OnSubmit;
 
-        public InputControl(Input input)
+        public BoolInputControl(Input input)
         {
             InitializeComponent();
             _input = input;
@@ -37,11 +35,11 @@ namespace dax.Gui
         {
             get
             {
-                return textBoxValue.Text;
+                return checkBoxValue.IsChecked == true ? "1" : "0";
             }
             set
             {
-                textBoxValue.Text = value;
+                checkBoxValue.IsChecked = "1" == value;
             }
         }
 
@@ -77,11 +75,11 @@ namespace dax.Gui
         {
             get
             {
-                return textBoxValue.Background == _hightlightBrush;
+                return textBlockWrapper.Background == _hightlightBrush;
             }
             set
             {
-                textBoxValue.Background = value ? _hightlightBrush : Brushes.Transparent;
+                textBlockWrapper.Background = value ? _hightlightBrush : Brushes.Transparent;
             }
         }
 
@@ -94,25 +92,17 @@ namespace dax.Gui
 
         private void RefreshView()
         {
-            if (checkBoxEnabled != null && textBoxValue != null)
+            if (checkBoxEnabled != null && checkBoxValue != null)
             {
-                textBoxValue.IsEnabled = checkBoxEnabled.IsChecked == true;
+                checkBoxValue.IsEnabled = checkBoxEnabled.IsChecked == true;
             }
         }
 
         #region Event Handlers
 
-        private void checkBoxEnabled_CheckedChanged(object sender, System.Windows.RoutedEventArgs e)
+        private void CheckBoxEnabled_CheckedChanged(object sender, System.Windows.RoutedEventArgs e)
         {
             RefreshView();
-        }
-
-        private void TextBoxValue_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter && OnSubmit != null)
-            {
-                OnSubmit(this, EventArgs.Empty);
-            }
         }
 
         #endregion

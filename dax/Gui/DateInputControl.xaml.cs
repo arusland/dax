@@ -5,13 +5,13 @@ using System.Windows.Media;
 
 namespace dax.Gui
 {
-    public partial class InputControl : BaseInputControl
+    public partial class DateInputControl : BaseInputControl
     {
         private readonly Input _input;
         private static Brush _hightlightBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0xCB, 0xF5, 0xD6));
         public override event EventHandler<EventArgs> OnSubmit;
 
-        public InputControl(Input input)
+        public DateInputControl(Input input)
         {
             InitializeComponent();
             _input = input;
@@ -37,7 +37,7 @@ namespace dax.Gui
         {
             get
             {
-                return textBoxValue.Text;
+                return datePicker.SelectedDate.Value.ToLongDateString();
             }
             set
             {

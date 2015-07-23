@@ -105,13 +105,26 @@ namespace dax.Document
             var items = doc.GetNodes("project/input/field")
                 .Select(p => new Input(p.GetAttribute("name"),
                         p.GetAttribute("title"),
-                        p.GetSafeAttribute("type"),
+                        ParseInputType(p.GetSafeAttribute("type")),
                         p.GetSafeAttribute("default", ""), 
                         bool.Parse(p.GetSafeAttribute("allowBlank", "true")),
                         bool.Parse(p.GetSafeAttribute("enabled", "true"))))
                 .ToList();
 
             return items;
+        }
+
+        private static InputType ParseInputType(String type)
+        {
+            switch(type)
+            {
+                case "bool":
+                    return InputType.Bool;
+                case "date":
+                    return InputType.Date;
+                default:
+                    return InputType.Text;
+            }
         }
 
         private List<Property> LoadProperties(XDocument doc)

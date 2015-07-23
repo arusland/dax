@@ -36,11 +36,11 @@ namespace dax.Gui
             get { return _daxManager; }
         }
 
-        public IEnumerable<InputControl> InputControls
+        public IEnumerable<BaseInputControl> InputControls
         {
             get
             {
-                return gridInputFields.Children.Cast<InputControl>();
+                return gridInputFields.Children.Cast<BaseInputControl>();
             }
         }
 
@@ -74,7 +74,7 @@ namespace dax.Gui
 
             foreach (var input in _daxManager.Inputs)
             {
-                var inputControl = new InputControl(input);
+                BaseInputControl inputControl = BaseInputControl.Create(input);
                 inputControl.OnSubmit += (s, e) => InvokeSearch();
                 AddInputField(inputControl);
 
@@ -167,7 +167,7 @@ namespace dax.Gui
             }
         }
 
-        private void AddInputField(InputControl input)
+        private void AddInputField(BaseInputControl input)
         {
             gridInputFields.Children.Add(input);
             int rowCount = (gridInputFields.Children.Count + (INPUT_ROWS_COUNT - 1)) / INPUT_ROWS_COUNT;

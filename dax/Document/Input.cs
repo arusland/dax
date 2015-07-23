@@ -4,9 +4,7 @@ namespace dax.Document
 {
     public class Input
     {
-        private const String BOOL_TYPE = "bool";
-
-        public Input(String name, String title, String type, String defaultValue, bool allowBlank, bool enabled)
+        public Input(String name, String title, InputType type, String defaultValue, bool allowBlank, bool enabled)
         {
             Name = name;
             Title = title;
@@ -23,12 +21,6 @@ namespace dax.Document
         }
 
         public String Title
-        {
-            get;
-            private set;
-        }
-
-        public String Type
         {
             get;
             private set;
@@ -52,12 +44,10 @@ namespace dax.Document
             private set;
         }
 
-        public bool IsBoolType
+        public InputType Type
         {
-            get
-            {
-                return BOOL_TYPE == Type;
-            }
+            get;
+            private set;
         }
 
         public override String ToString()

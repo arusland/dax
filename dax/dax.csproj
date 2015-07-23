@@ -97,6 +97,7 @@
     <Compile Include="Gui\BackgroundControl.xaml.cs">
       <DependentUpon>BackgroundControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Gui\BaseInputControl.cs" />
     <Compile Include="Gui\ConnectionEditDialog.xaml.cs">
       <DependentUpon>ConnectionEditDialog.xaml</DependentUpon>
     </Compile>
@@ -105,9 +106,16 @@
     </Compile>
     <Compile Include="Gui\Events\BindingClickEventArgs.cs" />
     <Compile Include="Gui\INotificationView.cs" />
+    <Compile Include="Gui\BoolInputControl.xaml.cs">
+      <DependentUpon>BoolInputControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\DateInputControl.xaml.cs">
+      <DependentUpon>DateInputControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Gui\InputControl.xaml.cs">
       <DependentUpon>InputControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Document\InputType.cs" />
     <Compile Include="Gui\OperationState.cs" />
     <Compile Include="Gui\StartUpPageControl.xaml.cs">
       <DependentUpon>StartUpPageControl.xaml</DependentUpon>
@@ -141,6 +149,14 @@
     <Page Include="Gui\ConnectionsEditDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\BoolInputControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Gui\DateInputControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Gui\InputControl.xaml">
       <SubType>Designer</SubType>
