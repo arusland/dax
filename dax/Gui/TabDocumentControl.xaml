@@ -100,6 +100,7 @@
             x:Name="scrollViewerMain"
             x:FieldModifier="private"
             Grid.Row="1"
+            Background="White"
             HorizontalScrollBarVisibility="Auto">
 
             <Grid

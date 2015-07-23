@@ -100,22 +100,37 @@ namespace dax.Core
                     }
                 }
 
+                List<Task> currentTasks = new List<Task>();
+                bool cancelOperation = false;
+
+
                 foreach (var item in acceptedBlocks)
                 {
                     Block block = item.Key;
                     IQueryBlock queryBlock = item.Value;
 
-                    queryBlock.Update();
+                    var task = queryBlock.UpdateAsync();
+                    currentTasks.Add(task);
 
-                    if (!queryBlock.IsEmpty || block.ShowOnEmpty)
-                    {
-                        bool canceled = DoNewBlockAddedEvent(block, queryBlock);
-
-                        if (canceled)
+                    task.GetAwaiter().OnCompleted(() =>
                         {
-                            // user canceled operation
-                            break;
-                        }
+                            if (!cancelOperation && (!queryBlock.IsEmpty || block.ShowOnEmpty))
+                            {
+                                bool canceled = DoNewBlockAddedEvent(block, queryBlock);
+
+                                if (canceled)
+                                {
+                                    cancelOperation = true;
+                                }
+                            }
+                        });
+                }
+
+                while (!Task.WaitAll(currentTasks.ToArray(), 100))
+                {
+                    if (cancelOperation)
+                    {
+                        break;
                     }
                 }
             }

@@ -2,6 +2,7 @@
 using dax.Core.Events;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -105,6 +106,7 @@ namespace dax.Gui
                 _notificationView.SetStatus("Loading...");
                 buttonSearch.IsEnabled = false;
                 var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
+                var watcher = Stopwatch.StartNew();
                 var task = _daxManager.ReloadAsync(inputValues);
                 task.GetAwaiter().OnCompleted(() =>
                 {
@@ -114,7 +116,8 @@ namespace dax.Gui
                     }
                     else
                     {
-                        _notificationView.SetStatus(String.Empty);
+                        watcher.Stop();
+                        _notificationView.SetStatus(String.Format("Queries executed in {0} seconds", watcher.ElapsedMilliseconds / 1000));
                     }
 
                     CurrentState = OperationState.Ready;
@@ -144,14 +147,20 @@ namespace dax.Gui
                 case OperationState.Ready:
                     buttonSearch.Content = "Search";
                     buttonSearch.IsEnabled = true;
+                    buttonReconnect.IsEnabled = true;
+                    buttonReload.IsEnabled = true;
                     break;
                 case OperationState.Searching:
                     buttonSearch.Content = "Cancel";
                     buttonSearch.IsEnabled = true;
+                    buttonReconnect.IsEnabled = false;
+                    buttonReload.IsEnabled = false;
                     break;
                 case OperationState.Canceling:
                     buttonSearch.Content = "Canceling...";
                     buttonSearch.IsEnabled = false;
+                    buttonReconnect.IsEnabled = false;
+                    buttonReload.IsEnabled = false;
                     break;
                 default:
                     throw new InvalidOperationException("Unsupported state: " + _currentState);
@@ -212,9 +221,14 @@ namespace dax.Gui
         {
             var tableItem = new TableControl(e.Block, e.QueryBlock, _notificationView);
             tableItem.OnBindingClick += OnBinding_Click;
-            gridBlocks.RowDefinitions.Add(new RowDefinition());
             gridBlocks.Children.Add(tableItem);
-            Grid.SetRow(tableItem, gridBlocks.RowDefinitions.Count - 1);
+
+            while (e.Block.Order >= gridBlocks.RowDefinitions.Count)
+            {
+                gridBlocks.RowDefinitions.Add(new RowDefinition());
+            }
+
+            Grid.SetRow(tableItem, e.Block.Order);
 
             e.Canceled = _currentState == OperationState.Canceling;
             RefreshConnectionStatus();

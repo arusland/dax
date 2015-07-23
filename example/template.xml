@@ -39,6 +39,24 @@
 				select * from information_schema.tables				
 			</query>
 		</block>
+
+		<block title="All tables (withour vars) 2">			
+			<query>
+				select * from information_schema.tables				
+			</query>
+		</block>
+
+		<block title="All tables (withour vars) 3">			
+			<query>
+				select * from information_schema.tables				
+			</query>
+		</block>
+
+		<block title="All tables (withour vars) 4">			
+			<query>
+				select * from information_schema.tables				
+			</query>
+		</block>
 	</scope>
 </project>
     

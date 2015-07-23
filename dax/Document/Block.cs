@@ -6,11 +6,12 @@ namespace dax.Document
 {
     public class Block
     {
-        public Block(String title, Query query, IEnumerable<Binding> bindings, bool showOnEmpty)
+        public Block(String title, Query query, IEnumerable<Binding> bindings, bool showOnEmpty, int order)
         {
             Title = title;
             Query = query;
             ShowOnEmpty = showOnEmpty;
+            Order = order;
             Bindings = bindings.ToList();
         }                
 
@@ -27,6 +28,12 @@ namespace dax.Document
         }
 
         public Query Query
+        {
+            get;
+            private set;
+        }
+
+        public int Order
         {
             get;
             private set;
