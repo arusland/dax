@@ -7,7 +7,7 @@
 		<field name="OBJECT_NAME" title="Object name" allowBlank="false"/>
 		<field name="VIEW_NAME" title="View name"/>
 		<field name="TABLE_NAME" title="Table name" allowBlank="false"/>
-		<field name="IS_MS_SHIPPED" title="is_ms_shipped" type="bool" default="1"/>
+		<field name="IS_MS_SHIPPED" title="is_ms_shipped" type="bool" default="1" enabled="false"/>
 	</input>
 
 	<scope version="x.x">

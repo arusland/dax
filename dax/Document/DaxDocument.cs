@@ -107,7 +107,8 @@ namespace dax.Document
                         p.GetAttribute("title"),
                         p.GetSafeAttribute("type"),
                         p.GetSafeAttribute("default", ""), 
-                        bool.Parse(p.GetSafeAttribute("allowBlank", "true"))))
+                        bool.Parse(p.GetSafeAttribute("allowBlank", "true")),
+                        bool.Parse(p.GetSafeAttribute("enabled", "true"))))
                 .ToList();
 
             return items;

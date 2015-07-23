@@ -6,15 +6,16 @@ namespace dax.Document
     {
         private const String BOOL_TYPE = "bool";
 
-        public Input(String name, String title, String type, String defaultValue, bool allowBlank)
+        public Input(String name, String title, String type, String defaultValue, bool allowBlank, bool enabled)
         {
             Name = name;
             Title = title;
             Type = type;
             DefaultValue = defaultValue;
             AllowBlank = allowBlank;
+            Enabled = enabled;
         }
-        
+
         public String Name
         {
             get;
@@ -40,6 +41,12 @@ namespace dax.Document
         }
 
         public bool AllowBlank
+        {
+            get;
+            private set;
+        }
+
+        public bool Enabled
         {
             get;
             private set;

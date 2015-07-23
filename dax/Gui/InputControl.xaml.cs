@@ -19,6 +19,7 @@ namespace dax.Gui
             _input = input;
             InputTitle = _input.Title;
             InputValue = _input.DefaultValue;
+            IsSelected = _input.Enabled;
             RefreshView();
         }
 
@@ -102,7 +103,7 @@ namespace dax.Gui
 
         public void Reset()
         {
-            IsSelected = true;
+            IsSelected = _input.Enabled; ;
             InputValue = _input.DefaultValue;
             IsHighlighted = false;
         }
