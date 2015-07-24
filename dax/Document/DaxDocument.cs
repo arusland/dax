@@ -9,11 +9,11 @@ namespace dax.Document
 {
     public class DaxDocument
     {
-        private readonly List<Property> _properties = new List<Property>();        
-        private readonly List<Input> _inputs = new List<Input>();        
+        private readonly List<Property> _properties = new List<Property>();
+        private readonly List<Input> _inputs = new List<Input>();
         private readonly List<Scope> _scopes = new List<Scope>();
         private readonly FileInfo _currentFile;
-        
+
         private DaxDocument(String file)
         {
             var fileInfo = new FileInfo(file);
@@ -58,7 +58,7 @@ namespace dax.Document
 
         private void Load(FileInfo file)
         {
-            XDocument doc= XDocument.Load(file.FullName);
+            XDocument doc = XDocument.Load(file.FullName);
 
             Name = doc.Element("project").GetAttribute("name");
             _properties.AddRange(LoadProperties(doc));
@@ -106,8 +106,8 @@ namespace dax.Document
                 .Select(p => new Input(p.GetAttribute("name"),
                         p.GetAttribute("title"),
                         ParseInputType(p.GetSafeAttribute("type")),
-                        p.GetSafeAttribute("default", ""), 
-                        bool.Parse(p.GetSafeAttribute("allowBlank", "true")),
+                        p.GetSafeAttribute("default", ""),
+                        bool.Parse(p.GetSafeAttribute("allowBlank", "false")),
                         bool.Parse(p.GetSafeAttribute("enabled", "true"))))
                 .ToList();
 
@@ -116,7 +116,7 @@ namespace dax.Document
 
         private static InputType ParseInputType(String type)
         {
-            switch(type)
+            switch (type)
             {
                 case "bool":
                     return InputType.Bool;
@@ -130,7 +130,7 @@ namespace dax.Document
         private List<Property> LoadProperties(XDocument doc)
         {
             var items = doc.GetNodes("project/props/prop")
-                .Select(p => new Property(p.GetAttribute("name"), 
+                .Select(p => new Property(p.GetAttribute("name"),
                         p.GetAttribute("value")))
                 .ToList();
 

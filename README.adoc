@@ -34,7 +34,7 @@ In order to be useful, project file should contain at least one input field and 
 In above example, single block (named "Sys objects") includes sql-query with one input field. If this input field not typed by user, the query cannot be run (will be skipped). Input field must be wrapped by doubled curly braces.
 
 === Cannot be blank
-By default, input field can be empty and will be used by the dax. In order to suppress such behaviour, we can set *allowBlank* attribute to *false*.
+By default, input field cannot be empty and not used by the dax. In order to use empty input in query, we can set *allowBlank* attribute to *true*.
 
 .Suppression of empty input
 [source,xml]

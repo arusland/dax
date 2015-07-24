@@ -4,9 +4,9 @@
 	</props>
 
 	<input>
-		<field name="OBJECT_NAME" title="Object name" allowBlank="false"/>
-		<field name="VIEW_NAME" title="View name"/>
-		<field name="TABLE_NAME" title="Table name" allowBlank="false"/>
+		<field name="OBJECT_NAME" title="Object name"/>
+		<field name="VIEW_NAME" title="View name" allowBlank="true"/>
+		<field name="TABLE_NAME" title="Table name"/>
 		<field name="IS_MS_SHIPPED" title="is_ms_shipped" type="bool" default="1" enabled="false"/>
 		<field name="DATE_TEST" title="Date 1" type="date"/>
 	</input>
