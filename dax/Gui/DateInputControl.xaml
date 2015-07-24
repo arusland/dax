@@ -12,15 +12,17 @@
                 x:FieldModifier="private"
                 Margin="5"
                 VerticalAlignment="Center"
-                Checked="checkBoxEnabled_CheckedChanged"
+                Checked="CheckBoxEnabled_CheckedChanged"
                 IsChecked="True"
-                Unchecked="checkBoxEnabled_CheckedChanged">
+                Unchecked="CheckBoxEnabled_CheckedChanged">
                 <TextBlock x:Name="labelName">Value Name</TextBlock>
             </CheckBox>
 
             <DatePicker
                 x:Name="datePicker"
-                Margin="3" />
+                Height="25"
+                Margin="3"
+                SelectedDateFormat="Short" />
         </StackPanel>
     </Grid>
 </ctrl:BaseInputControl>

@@ -178,6 +178,11 @@ namespace dax.Core
 
         private void DoErrorEvent(Exception error)
         {
+            if (error is AggregateException)
+            {
+                error = ((AggregateException)error).InnerExceptions[0];
+            }
+
             QueryExecuteException queryException = error as QueryExecuteException;
 
             if (queryException != null)

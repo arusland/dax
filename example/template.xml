@@ -8,6 +8,7 @@
 		<field name="VIEW_NAME" title="View name"/>
 		<field name="TABLE_NAME" title="Table name" allowBlank="false"/>
 		<field name="IS_MS_SHIPPED" title="is_ms_shipped" type="bool" default="1" enabled="false"/>
+		<field name="DATE_TEST" title="Date 1" type="date"/>
 	</input>
 
 	<scope version="x.x">
@@ -17,10 +18,10 @@
 			</query>
 		</block>
 
-		<block title="All views" showOnEmpty="false">			
+		<block title="All views">			
 			<query>
-				select * from sys.all_views
-				where name like '%{{VIEW_NAME}}%' [[and is_ms_shipped = {{IS_MS_SHIPPED}}]]
+				<![CDATA[select * from sys.all_views
+				where name like '%{{VIEW_NAME}}%' [[and is_ms_shipped = {{IS_MS_SHIPPED}}]] [[and create_date < {{DATE_TEST}}]]]]>
 			</query>
 		</block>	
 

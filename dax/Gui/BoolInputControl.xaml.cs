@@ -31,6 +31,11 @@ namespace dax.Gui
             }
         }
 
+        public override bool IsBlank
+        {
+            get { return false; }
+        }
+
         public override String InputValue
         {
             get

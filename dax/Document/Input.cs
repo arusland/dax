@@ -10,7 +10,7 @@ namespace dax.Document
             Title = title;
             Type = type;
             DefaultValue = defaultValue;
-            AllowBlank = allowBlank;
+            AllowBlank = allowBlank && (type != InputType.Date);
             Enabled = enabled;
         }
 

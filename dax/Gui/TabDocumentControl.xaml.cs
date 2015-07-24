@@ -98,7 +98,7 @@ namespace dax.Gui
                 InputControls.ToList().ForEach(p => p.IsHighlighted = false);
 
                 var inputs = InputControls.Where(p => p.IsSelected)
-                                .Where(p => p.Context.AllowBlank || !String.IsNullOrEmpty(p.InputValue))
+                                .Where(p => p.Context.AllowBlank || !p.IsBlank)
                                 .ToList();
 
                 inputs.ForEach(p => p.IsHighlighted = true);

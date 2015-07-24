@@ -1,12 +1,12 @@
 ﻿using dax.Document;
 using System;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace dax.Gui
 {
     public partial class DateInputControl : BaseInputControl
     {
+        private const String SQL_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
         private readonly Input _input;
         private static Brush _hightlightBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0xCB, 0xF5, 0xD6));
         public override event EventHandler<EventArgs> OnSubmit;
@@ -33,15 +33,31 @@ namespace dax.Gui
             }
         }
 
+        public override bool IsBlank
+        {
+            get { return datePicker.SelectedDate == null; }
+        }
+
         public override String InputValue
         {
             get
             {
-                return datePicker.SelectedDate.Value.ToLongDateString();
+                return IsBlank ? String.Empty : "'" + datePicker.SelectedDate.Value.ToString(SQL_DATE_FORMAT) + "'";
             }
             set
             {
-                textBoxValue.Text = value;
+                DateTime dt;
+
+                if (!String.IsNullOrEmpty(value))
+                {
+                    value = value.Trim('\'');
+
+                    if (DateTime.TryParseExact(value, SQL_DATE_FORMAT, System.Threading.Thread.CurrentThread.CurrentCulture,
+                        System.Globalization.DateTimeStyles.None, out dt))
+                    {
+                        datePicker.SelectedDate = dt;
+                    }
+                }
             }
         }
 
@@ -77,11 +93,11 @@ namespace dax.Gui
         {
             get
             {
-                return textBoxValue.Background == _hightlightBrush;
+                return datePicker.Background == _hightlightBrush;
             }
             set
             {
-                textBoxValue.Background = value ? _hightlightBrush : Brushes.Transparent;
+                datePicker.Background = value ? _hightlightBrush : Brushes.Transparent;
             }
         }
 
@@ -94,25 +110,17 @@ namespace dax.Gui
 
         private void RefreshView()
         {
-            if (checkBoxEnabled != null && textBoxValue != null)
+            if (checkBoxEnabled != null && datePicker != null)
             {
-                textBoxValue.IsEnabled = checkBoxEnabled.IsChecked == true;
+                datePicker.IsEnabled = checkBoxEnabled.IsChecked == true;
             }
         }
 
         #region Event Handlers
 
-        private void checkBoxEnabled_CheckedChanged(object sender, System.Windows.RoutedEventArgs e)
+        private void CheckBoxEnabled_CheckedChanged(object sender, System.Windows.RoutedEventArgs e)
         {
             RefreshView();
-        }
-
-        private void TextBoxValue_PreviewKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter && OnSubmit != null)
-            {
-                OnSubmit(this, EventArgs.Empty);
-            }
         }
 
         #endregion

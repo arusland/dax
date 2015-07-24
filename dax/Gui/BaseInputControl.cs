@@ -20,6 +20,11 @@ namespace dax.Gui
             set;
         }
 
+        public abstract bool IsBlank
+        {
+            get;
+        }
+
         public abstract String InputName
         {
             get;
@@ -51,7 +56,7 @@ namespace dax.Gui
                 case InputType.Bool:
                     return new BoolInputControl(input);
                 case InputType.Date:
-                    throw new NotImplementedException();
+                    return new DateInputControl(input);
                 case InputType.Text:
                     return new InputControl(input);
                 default:

@@ -1,9 +1,9 @@
 ﻿using dax.Db;
 using dax.Gui.Events;
+using dax.Utils;
 using System;
 using System.Data;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,7 +11,6 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using dax.Utils;
 
 namespace dax.Gui
 {
@@ -89,7 +88,10 @@ namespace dax.Gui
 
         private void RefreshPaging()
         {
-            gridTable.ItemsSource = _queryBlock.Table.DefaultView;
+            if (_queryBlock.Table != null)
+            {
+                gridTable.ItemsSource = _queryBlock.Table.DefaultView;
+            }
             textBoxCurrentPage.Text = (_queryBlock.PageIndex + 1).ToString();
         }
 
