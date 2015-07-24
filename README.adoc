@@ -36,12 +36,12 @@ In above example, single block (named "Sys objects") includes sql-query with one
 === Cannot be blank
 By default, input field cannot be empty and not used by the dax. In order to use empty input in query, we can set *allowBlank* attribute to *true*.
 
-.Suppression of empty input
+.Allowing of empty input
 [source,xml]
 ----
 ...
 <input>
-  <field name="OBJECT_NAME" title="Object name" allowBlank="false"/>
+  <field name="OBJECT_NAME" title="Object name" allowBlank="true"/>
 </input>
 ...
 ----
