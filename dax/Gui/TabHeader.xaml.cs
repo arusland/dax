@@ -5,11 +5,12 @@ namespace dax.Gui
 {
     public partial class TabHeader : UserControl
     {
-        public TabHeader(String documentName, String connection = null)
+        public TabHeader(String documentName, String connection = null, String scopeVersion = null)
         {
             InitializeComponent();
             DocumentName = documentName;
             Connection = connection;
+            ScopeVersion = scopeVersion;
         }
 
         public String DocumentName
@@ -34,7 +35,28 @@ namespace dax.Gui
             {
                 labelConnection.Text = value ?? String.Empty;
                 labelConnection.Visibility = String.IsNullOrEmpty(labelConnection.Text) ?
-                    System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible; 
+                    System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible;
+            }
+        }
+
+        public String ScopeVersion
+        {
+            get
+            {
+                return labelScopeVersion.Text;
+            }
+            set
+            {
+                String version = value ?? String.Empty;
+
+                if (!String.IsNullOrEmpty(version))
+                {
+                    version = String.Format("[db: {0}]", version);
+                }
+
+                labelScopeVersion.Text = version;
+                labelScopeVersion.Visibility = String.IsNullOrEmpty(version) ?
+                    System.Windows.Visibility.Collapsed : System.Windows.Visibility.Visible;
             }
         }
 

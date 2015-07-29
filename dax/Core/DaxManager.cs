@@ -13,11 +13,13 @@ namespace dax.Core
     {
         private const String PROPERTY_QUERY_VERSION = "version.query";
         private DaxDocument _document;
+        private String _scopeVersion;
         private readonly TaskScheduler _uiContext;
         public event EventHandler<QueryReloadedEventArgs> OnQueryReloaded;
         public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
         public event EventHandler<ErrorEventArgs> OnError;
         public event EventHandler<QueryProviderEventArgs> OnQueryProvider;
+        public event EventHandler<EventArgs> OnScopeVersionChanged;
 
         public DaxManager(String filePath, TaskScheduler uiContext)
         {
@@ -55,6 +57,20 @@ namespace dax.Core
             private set;
         }
 
+        public String ScopeVersion
+        {
+            get
+            {
+                return _scopeVersion;
+            }
+            private set
+            {
+                _scopeVersion = value;
+
+                RunOnUIContext(() => OnScopeVersionChanged(this, new EventArgs()));
+            }
+        }
+
         public void ReloadDocument()
         {
             try
@@ -89,20 +105,20 @@ namespace dax.Core
             {
                 String version = GetVersion(dbProvider);
                 Scope scope = GetScope(version);
+                ScopeVersion = scope.Version;
                 Dictionary<Block, IQueryBlock> acceptedBlocks = new Dictionary<Block, IQueryBlock>();
 
                 foreach (Block block in scope.Blocks)
                 {
                     if (block.CanExecute(inputValues))
                     {
-                        String query = block.Query.BuildQuery(inputValues);
+                        String query = block.BuildQuery(inputValues);
                         acceptedBlocks.Add(block, dbProvider.CreateBlock(query));
                     }
                 }
 
                 List<Task> currentTasks = new List<Task>();
                 bool cancelOperation = false;
-
 
                 foreach (var item in acceptedBlocks)
                 {

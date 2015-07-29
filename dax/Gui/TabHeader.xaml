@@ -10,13 +10,21 @@
                 x:Name="labelName"
                 Margin="0,0,3,0"
                 VerticalAlignment="Center"
-                Text="Doc Name" />
+                Text="Doc Name"
+                ToolTip="Document name" />
             <TextBlock
                 x:Name="labelConnection"
                 Margin="0,0,3,0"
                 VerticalAlignment="Center"
                 Foreground="Gray"
-                Text="dbserver.db.user" />
+                Text="dbserver.db.user"
+                ToolTip="Database connection" />
+            <TextBlock
+                x:Name="labelScopeVersion"
+                Margin="0,0,3,0"
+                VerticalAlignment="Center"
+                Text="[db: 1.2.3]"
+                ToolTip="Database version" />
             <TextBlock
                 x:Name="buttonClose"
                 Height="20"

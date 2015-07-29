@@ -10,6 +10,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,8 +20,8 @@ namespace dax
 {
     public partial class MainWindow : Window, INotificationView
     {
-        private const String TITLE_TEMPLATE_WITH_DOCUMENT = "DAta eXplorer - [{0}] - ver {1} [BETA]";
-        private const String TITLE_TEMPLATE = "DAta eXplorer - ver {0} [BETA]";
+        private const String TITLE_TEMPLATE_WITH_DOCUMENT = "DAta eXplorer - [{0}] - ver {1}";
+        private const String TITLE_TEMPLATE = "DAta eXplorer - ver {0}";
         private const String TITLE_MESSAGE_BOX = "Data Explorer";
 
         private readonly TabItem _addnewTabItem;
@@ -75,6 +76,7 @@ namespace dax
             {
                 DaxManager daxManager = new DaxManager(filePath, TaskScheduler.FromCurrentSynchronizationContext());
                 daxManager.OnQueryProvider += DaxManager_OnQueryProvider;
+                daxManager.OnScopeVersionChanged += DaxManager_OnScopeVersionChanged;
 
                 var tabItemControl = new TabDocumentControl(daxManager, this);
                 var item = new TabItem();
@@ -84,7 +86,7 @@ namespace dax
                 item.Header = tabHeader;
                 item.Content = tabItemControl;
 
-                // add new tab just before adding tab
+                // add new tab just before "adding" tab
                 int index = tabControlMain.Items.IndexOf(_addnewTabItem) - 1;
                 tabControlMain.Items.Insert(index, item);
                 tabItemControl.ReloadDocument();
@@ -129,15 +131,18 @@ namespace dax
             if (tabControlMain.SelectedItem != null)
             {
                 var doc = ((TabItem)tabControlMain.SelectedItem).Content as TabDocumentControl;
+                var title = new StringBuilder();
 
                 if (doc != null)
                 {
-                    this.Title = String.Format(TITLE_TEMPLATE_WITH_DOCUMENT, doc.DocumentTitle, VersionUtils.GetVersion());
+                    title.AppendFormat(TITLE_TEMPLATE_WITH_DOCUMENT, doc.DocumentTitle, VersionUtils.GetVersion());
                 }
                 else
                 {
-                    this.Title = String.Format(TITLE_TEMPLATE, VersionUtils.GetVersion());
+                    title.AppendFormat(TITLE_TEMPLATE, VersionUtils.GetVersion());
                 }
+
+                this.Title = title.ToString();
             }
         }
 
@@ -152,7 +157,9 @@ namespace dax
                 if (_providerMapping.ContainsKey(doc.Manager))
                 {
                     var provider = _providerMapping[doc.Manager];
-                    ((TabHeader)currentTabItem.Header).Connection = provider.Connection.Format();
+                    var tabHeader = (TabHeader)currentTabItem.Header;
+                    tabHeader.Connection = provider.Connection.Format();
+                    tabHeader.ScopeVersion = doc.Manager.ScopeVersion;
                 }
             }
         }
@@ -336,6 +343,11 @@ namespace dax
                     doc.ReloadFile();
                 }
             }
+        }
+
+        private void DaxManager_OnScopeVersionChanged(object sender, EventArgs e)
+        {
+            UpdateCurrentTabHeader();
         }
 
         #endregion

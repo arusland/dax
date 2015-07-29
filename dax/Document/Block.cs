@@ -53,7 +53,12 @@ namespace dax.Document
         public bool CanExecute(Dictionary<String, String> inputValues)
         {
             return Query.CanExecute(inputValues);
-        }        
+        }
+
+        public String BuildQuery(Dictionary<String, String> inputValues)
+        {
+            return Query.BuildQuery(inputValues);
+        }
 
         public override String ToString()
         {
