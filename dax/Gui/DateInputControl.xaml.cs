@@ -9,7 +9,6 @@ namespace dax.Gui
         private const String SQL_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
         private readonly Input _input;
         private static Brush _hightlightBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0xCB, 0xF5, 0xD6));
-        public override event EventHandler<EventArgs> OnSubmit;
 
         public DateInputControl(Input input)
         {
