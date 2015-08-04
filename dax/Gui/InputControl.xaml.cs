@@ -8,7 +8,7 @@ namespace dax.Gui
     public partial class InputControl : BaseInputControl
     {
         private readonly Input _input;
-        private static Brush _hightlightBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0xCB, 0xF5, 0xD6));
+        private readonly static Brush SELECTED_BRUSH = new SolidColorBrush(Color.FromRgb(0xCB, 0xF5, 0xD6));
         public override event EventHandler<EventArgs> OnSubmit;
 
         public InputControl(Input input)
@@ -85,11 +85,11 @@ namespace dax.Gui
         {
             get
             {
-                return textBoxValue.Background == _hightlightBrush;
+                return textBoxValue.Background == SELECTED_BRUSH;
             }
             set
             {
-                textBoxValue.Background = value ? _hightlightBrush : Brushes.Transparent;
+                textBoxValue.Background = value ? SELECTED_BRUSH : Brushes.Transparent;
             }
         }
 
@@ -104,13 +104,15 @@ namespace dax.Gui
         {
             if (checkBoxEnabled != null && textBoxValue != null)
             {
-                textBoxValue.IsEnabled = checkBoxEnabled.IsChecked == true;
+                bool selected = true == checkBoxEnabled.IsChecked;
+                textBoxValue.IsEnabled = selected;
+                checkBoxEnabled.Foreground = selected ? Brushes.Black : Brushes.Gray;
             }
         }
 
         #region Event Handlers
 
-        private void checkBoxEnabled_CheckedChanged(object sender, System.Windows.RoutedEventArgs e)
+        private void CheckBoxEnabled_CheckedChanged(object sender, System.Windows.RoutedEventArgs e)
         {
             RefreshView();
         }

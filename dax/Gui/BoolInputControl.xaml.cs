@@ -99,7 +99,9 @@ namespace dax.Gui
         {
             if (checkBoxEnabled != null && checkBoxValue != null)
             {
-                checkBoxValue.IsEnabled = checkBoxEnabled.IsChecked == true;
+                bool selected = true == checkBoxEnabled.IsChecked;
+                checkBoxValue.IsEnabled = selected;
+                checkBoxEnabled.Foreground = selected ? Brushes.Black : Brushes.Gray;
             }
         }
 

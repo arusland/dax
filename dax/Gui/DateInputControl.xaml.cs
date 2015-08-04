@@ -111,7 +111,9 @@ namespace dax.Gui
         {
             if (checkBoxEnabled != null && datePicker != null)
             {
-                datePicker.IsEnabled = checkBoxEnabled.IsChecked == true;
+                bool selected = true == checkBoxEnabled.IsChecked;
+                datePicker.IsEnabled = selected;
+                checkBoxEnabled.Foreground = selected ? Brushes.Black : Brushes.Gray;
             }
         }
 
