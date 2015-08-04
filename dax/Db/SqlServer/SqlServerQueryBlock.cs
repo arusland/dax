@@ -34,9 +34,6 @@ namespace dax.Db.SqlServer
             get { return 25; }
         }
 
-        /// <summary>
-        /// Executed time in milliseconds
-        /// </summary>
         public long ElapsedTime
         {
             get;
@@ -133,11 +130,10 @@ namespace dax.Db.SqlServer
                     }
 
                     _table = table;
-
                     reader.Close();
 
                     watch.Stop();
-                    ElapsedTime = watch.ElapsedMilliseconds; 
+                    ElapsedTime = watch.ElapsedMilliseconds;
                 }
                 catch (Exception ex)
                 {
