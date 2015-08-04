@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     Loaded="UserControl_Loaded"
+    MouseLeftButtonUp="UserControl_MouseLeftButtonUp"
     d:DesignHeight="200"
     d:DesignWidth="600"
     mc:Ignorable="d">
@@ -17,9 +18,20 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
+        <CheckBox
+            x:Name="checkBoxSelected"
+            Grid.Column="0"
+            Grid.RowSpan="3"
+            Margin="5,15,5,5"
+            Checked="CheckBoxSelected_CheckedChanged"
+            IsChecked="True"
+            Unchecked="CheckBoxSelected_CheckedChanged" />
+
         <StackPanel
+            Grid.Column="1"
             Grid.Row="0"
             Orientation="Horizontal">
             <TextBlock
@@ -40,6 +52,7 @@
 
         <DataGrid
             x:Name="gridTable"
+            Grid.Column="1"
             Grid.Row="1"
             Margin="20,5,5,5"
             AutoGenerateColumns="True"
@@ -48,10 +61,12 @@
             CanUserDeleteRows="False"
             CanUserReorderColumns="False"
             IsReadOnly="True"
+            PreviewMouseLeftButtonUp="GridTable_PreviewMouseLeftButtonUp"
             PreviewMouseWheel="GridTable_PreviewMouseWheel" />
 
         <TextBlock
             x:Name="labelLoading"
+            Grid.Column="1"
             Grid.Row="1"
             Margin="20,5,5,5"
             Background="#99CCCCCC"
@@ -60,6 +75,7 @@
             Visibility="Collapsed" />
 
         <StackPanel
+            Grid.Column="1"
             Grid.Row="2"
             Orientation="Horizontal">
             <Button

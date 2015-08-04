@@ -83,11 +83,11 @@ namespace dax.Core
             }
         }
 
-        public void Reload(Dictionary<String, String> inputValues)
+        public void Reload(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
         {
             try
             {
-                ReloadInternal(inputValues);
+                ReloadInternal(inputValues, blockPredicate);
             }
             catch (Exception ex)
             {
@@ -95,7 +95,7 @@ namespace dax.Core
             }
         }
 
-        public void ReloadInternal(Dictionary<String, String> inputValues)
+        public void ReloadInternal(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
         {
             DoQueryReloadedEvent();
 
@@ -110,7 +110,7 @@ namespace dax.Core
 
                 foreach (Block block in scope.Blocks)
                 {
-                    if (block.CanExecute(inputValues))
+                    if (block.CanExecute(inputValues) && blockPredicate(block))
                     {
                         String query = block.BuildQuery(inputValues);
                         acceptedBlocks.Add(block, dbProvider.CreateBlock(query));
@@ -152,9 +152,9 @@ namespace dax.Core
             }
         }
 
-        public async Task ReloadAsync(Dictionary<String, String> inputValues)
+        public async Task ReloadAsync(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
         {
-            Task task = Task.Factory.StartNew(() => Reload(inputValues));
+            Task task = Task.Factory.StartNew(() => Reload(inputValues, blockPredicate));
 
             await task;
         }

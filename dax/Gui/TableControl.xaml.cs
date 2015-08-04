@@ -19,6 +19,7 @@ namespace dax.Gui
         private readonly IQueryBlock _queryBlock;
         private readonly dax.Document.Block _block;
         private readonly INotificationView _notificationView;
+        private readonly static Brush SELECTED_BRUSH = new SolidColorBrush(Color.FromRgb(0xED, 0xED, 0xED));
 
         public TableControl(dax.Document.Block block, IQueryBlock queryBlock, INotificationView notificationView)
         {
@@ -26,9 +27,30 @@ namespace dax.Gui
 
             _block = block;
             _queryBlock = queryBlock;
-            _notificationView = notificationView;            
+            _notificationView = notificationView;
             RefreshView();
-        }       
+        }
+
+        public bool IsSelected
+        {
+            get
+            {
+                return checkBoxSelected.IsChecked == true;
+            }
+            set
+            {
+                checkBoxSelected.IsChecked = value;
+                RefreshSelecting();
+            }
+        }
+
+        public dax.Document.Block Block
+        {
+            get
+            {
+                return _block;
+            }
+        }
 
         private void EnableControls(bool enable)
         {
@@ -81,18 +103,13 @@ namespace dax.Gui
 
             labelTitle.ToolTip = labelTooltip;
             labelTitle.Text = _block.Title;
-            labelElapsedTime.Text = NormalizeTime(_queryBlock.ElapsedTime);
+            labelElapsedTime.Text = TimeUtils.PrettifyTime(_queryBlock.ElapsedTime);
             textBoxCurrentPage.Text = (_queryBlock.PageIndex + 1).ToString();
         }
 
-        private static String NormalizeTime(long ms)
+        private void RefreshSelecting()
         {
-            if (ms >= 1000)
-            {
-                return String.Format("{0:F2} sec", (decimal)ms/1000);
-            }
-
-            return String.Format("{0} ms", ms);
+            this.Background = IsSelected ? SELECTED_BRUSH : Brushes.Transparent;
         }
 
         #region Event Handlers
@@ -221,6 +238,21 @@ namespace dax.Gui
                             EnableControls(true);
                         });
             }
+        }
+
+        private void CheckBoxSelected_CheckedChanged(object sender, RoutedEventArgs e)
+        {
+            RefreshSelecting();
+        }
+
+        private void UserControl_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            IsSelected = !IsSelected;
+        }
+
+        private void GridTable_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            e.Handled = true;
         }
 
         #endregion

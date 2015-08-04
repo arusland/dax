@@ -132,6 +132,7 @@
     <Compile Include="Managers\FileChangedEventArgs.cs" />
     <Compile Include="Managers\FileWatcher.cs" />
     <Compile Include="Utils\QueryUtils.cs" />
+    <Compile Include="Utils\TimeUtils.cs" />
     <Compile Include="Utils\VariableUtils.cs" />
     <Compile Include="Utils\VersionUtils.cs" />
     <Page Include="Gui\AboutBox.xaml">

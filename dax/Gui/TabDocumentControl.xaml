@@ -20,6 +20,7 @@
             </Grid.ColumnDefinitions>
 
             <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -30,37 +31,68 @@
 
             <StackPanel
                 Grid.Row="1"
+                VerticalAlignment="Bottom"
                 Orientation="Horizontal">
 
                 <TextBlock
                     Grid.Column="1"
                     Grid.Row="2"
-                    Margin="3"
+                    Margin="3,0,3,3"
                     VerticalAlignment="Top">
-                    <Hyperlink Click="SelectAll_Cliked">Select All</Hyperlink>
+                    <Hyperlink Click="SelectAll_Cliked">All Inputs</Hyperlink>
                 </TextBlock>
 
                 <TextBlock
                     Grid.Column="1"
                     Grid.Row="2"
-                    Margin="3"
+                    Margin="3,0,3,3"
                     VerticalAlignment="Top">
-                    <Hyperlink Click="SelectNone_Cliked">Select None</Hyperlink>
+                    <Hyperlink Click="SelectNone_Cliked">None Inputs</Hyperlink>
                 </TextBlock>
 
                 <TextBlock
                     Grid.Column="1"
                     Grid.Row="2"
-                    Margin="3"
+                    Margin="3,0,3,3"
                     VerticalAlignment="Top"
                     ToolTip="Reset all input values">
-                    <Hyperlink Click="ResetFilter_Click">Reset</Hyperlink>
+                    <Hyperlink Click="ResetFilter_Click">Reset Inputs</Hyperlink>
                 </TextBlock>
             </StackPanel>
 
             <StackPanel
+                Grid.Row="2"
+                VerticalAlignment="Bottom"
+                Orientation="Horizontal">
+                <TextBlock
+                    Grid.Column="1"
+                    Grid.Row="2"
+                    Margin="3,0,3,3"
+                    VerticalAlignment="Top">
+                    <Hyperlink Click="SelectAllBlocks_Clicked">All Blocks</Hyperlink>
+                </TextBlock>
+
+                <TextBlock
+                    Grid.Column="1"
+                    Grid.Row="2"
+                    Margin="3,0,3,3"
+                    VerticalAlignment="Top">
+                    <Hyperlink Click="SelectNoneBlocks_Clicked">None Blocks</Hyperlink>
+                </TextBlock>
+
+                <TextBlock
+                    Grid.Column="1"
+                    Grid.Row="2"
+                    Margin="3,0,3,3"
+                    VerticalAlignment="Top">
+                    <Hyperlink Click="ResetBlocks_Clicked">Reset Blocks</Hyperlink>
+                </TextBlock>
+
+            </StackPanel>
+
+            <StackPanel
                 Grid.Column="1"
-                Grid.RowSpan="2"
+                Grid.RowSpan="3"
                 Orientation="Vertical">
 
                 <Button
@@ -93,7 +125,6 @@
                     Content="Search"
                     FontWeight="Bold" />
             </StackPanel>
-
         </Grid>
 
         <ScrollViewer

@@ -1,11 +1,13 @@
 ﻿using dax.Core;
 using dax.Core.Events;
+using dax.Document;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using dax.Utils;
 
 namespace dax.Gui
 {
@@ -36,14 +38,6 @@ namespace dax.Gui
             get { return _daxManager; }
         }
 
-        public IEnumerable<BaseInputControl> InputControls
-        {
-            get
-            {
-                return gridInputFields.Children.Cast<BaseInputControl>();
-            }
-        }
-
         public String DocumentTitle
         {
             get
@@ -58,6 +52,22 @@ namespace dax.Gui
             {
                 _currentState = value;
                 RefreshState();
+            }
+        }
+
+        private IEnumerable<BaseInputControl> InputControls
+        {
+            get
+            {
+                return gridInputFields.Children.Cast<BaseInputControl>();
+            }
+        }
+
+        private IEnumerable<TableControl> BlockControls
+        {
+            get
+            {
+                return gridBlocks.Children.Cast<TableControl>();
             }
         }
 
@@ -103,11 +113,16 @@ namespace dax.Gui
 
                 inputs.ForEach(p => p.IsHighlighted = true);
 
+                var selectedQueries = BlockControls
+                    .Where(p => p.IsSelected)
+                    .Select(p => p.Block)
+                    .ToList();
+
                 _notificationView.SetStatus("Loading...");
                 buttonSearch.IsEnabled = false;
                 var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
                 var watcher = Stopwatch.StartNew();
-                var task = _daxManager.ReloadAsync(inputValues);
+                var task = _daxManager.ReloadAsync(inputValues, b => BlockFilter(b, selectedQueries));
                 task.GetAwaiter().OnCompleted(() =>
                 {
                     if (_currentState == OperationState.Canceling)
@@ -117,13 +132,18 @@ namespace dax.Gui
                     else
                     {
                         watcher.Stop();
-                        _notificationView.SetStatus(String.Format("Queries executed in {0} seconds", watcher.ElapsedMilliseconds / 1000));
+                        _notificationView.SetStatus(String.Format("Queries executed in {0}", TimeUtils.PrettifyTime(watcher.ElapsedMilliseconds)));
                     }
 
                     CurrentState = OperationState.Ready;
                 });
                 CurrentState = OperationState.Searching;
             }
+        }
+
+        private bool BlockFilter(Block target, List<Block> selectedBlocks)
+        {
+            return selectedBlocks.Count == 0 || selectedBlocks.Any(p => p.Order == target.Order);
         }
 
         public void InvokeCancelSearch()
@@ -291,6 +311,22 @@ namespace dax.Gui
         private void ResetFilter_Click(object sender, RoutedEventArgs e)
         {
             InputControls.ToList().ForEach(p => p.Reset());
+            InvokeSearch();
+        }
+
+        private void SelectAllBlocks_Clicked(object sender, RoutedEventArgs e)
+        {
+            BlockControls.ToList().ForEach(p => p.IsSelected = true);
+        }
+
+        private void SelectNoneBlocks_Clicked(object sender, RoutedEventArgs e)
+        {
+            BlockControls.ToList().ForEach(p => p.IsSelected = false);
+        }
+
+        private void ResetBlocks_Clicked(object sender, RoutedEventArgs e)
+        {
+            BlockControls.ToList().ForEach(p => p.IsSelected = false);
             InvokeSearch();
         }
 
