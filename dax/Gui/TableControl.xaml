@@ -19,13 +19,24 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock
-            x:Name="labelTitle"
+        <StackPanel
             Grid.Row="0"
-            Margin="10,5,5,5"
-            FontSize="22"
-            Foreground="#007ACC"
-            Text="Some Title" />
+            Orientation="Horizontal">
+            <TextBlock
+                x:Name="labelTitle"
+                Margin="10,5,5,5"
+                FontSize="22"
+                Foreground="#007ACC"
+                Text="Some Title" />
+            <TextBlock
+                x:Name="labelElapsedTime"
+                Margin="10,5,5,5"
+                VerticalAlignment="Bottom"
+                FontSize="17"
+                Foreground="Gray"
+                Text="12 ms"
+                ToolTip="Elapsed time" />
+        </StackPanel>
 
         <DataGrid
             x:Name="gridTable"

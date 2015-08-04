@@ -31,6 +31,14 @@ namespace dax.Db
             get;
         }
 
+        /// <summary>
+        /// Executed time in milliseconds
+        /// </summary>
+        long ElapsedTime
+        {
+            get;
+        }
+
         void Update();
 
         void NextPage();

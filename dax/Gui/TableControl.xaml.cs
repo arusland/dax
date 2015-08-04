@@ -26,30 +26,9 @@ namespace dax.Gui
 
             _block = block;
             _queryBlock = queryBlock;
-            _notificationView = notificationView;
-            Title = block.Title;
-            var labelTooltip = new TextBlock()
-            {
-                Text = QueryUtils.Normalize(_queryBlock.QueryText),
-                FontSize = 22,
-                Foreground = Brushes.Blue
-            };
-            labelTitle.ToolTip = labelTooltip;
-            RefreshPaging();
-        }
-
-        public String Title
-        {
-            get
-            {
-                return labelTitle.Text;
-            }
-
-            private set
-            {
-                labelTitle.Text = value;
-            }
-        }
+            _notificationView = notificationView;            
+            RefreshView();
+        }       
 
         private void EnableControls(bool enable)
         {
@@ -82,17 +61,38 @@ namespace dax.Gui
                 _notificationView.ShowError(task.Exception.GetBaseException().Message);
             }
 
-            RefreshPaging();
+            RefreshView();
             EnableControls(true);
         }
 
-        private void RefreshPaging()
+        private void RefreshView()
         {
             if (_queryBlock.Table != null)
             {
                 gridTable.ItemsSource = _queryBlock.Table.DefaultView;
             }
+
+            var labelTooltip = new TextBlock()
+            {
+                Text = QueryUtils.Normalize(_queryBlock.QueryText),
+                FontSize = 22,
+                Foreground = Brushes.Blue
+            };
+
+            labelTitle.ToolTip = labelTooltip;
+            labelTitle.Text = _block.Title;
+            labelElapsedTime.Text = NormalizeTime(_queryBlock.ElapsedTime);
             textBoxCurrentPage.Text = (_queryBlock.PageIndex + 1).ToString();
+        }
+
+        private static String NormalizeTime(long ms)
+        {
+            if (ms >= 1000)
+            {
+                return String.Format("{0:F2} sec", (decimal)ms/1000);
+            }
+
+            return String.Format("{0} ms", ms);
         }
 
         #region Event Handlers
@@ -217,7 +217,7 @@ namespace dax.Gui
                     .GetAwaiter()
                     .OnCompleted(() =>
                         {
-                            RefreshPaging();
+                            RefreshView();
                             EnableControls(true);
                         });
             }

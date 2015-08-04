@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace dax.Db.SqlServer
@@ -31,6 +32,15 @@ namespace dax.Db.SqlServer
         public int PageSize
         {
             get { return 25; }
+        }
+
+        /// <summary>
+        /// Executed time in milliseconds
+        /// </summary>
+        public long ElapsedTime
+        {
+            get;
+            private set;
         }
 
         public int PageIndex
@@ -94,6 +104,8 @@ namespace dax.Db.SqlServer
 
                 try
                 {
+                    var watch = Stopwatch.StartNew();
+
                     connection.Open();
                     SqlDataReader reader = command.ExecuteReader();
                     var table = CreateTable(reader);
@@ -123,6 +135,9 @@ namespace dax.Db.SqlServer
                     _table = table;
 
                     reader.Close();
+
+                    watch.Stop();
+                    ElapsedTime = watch.ElapsedMilliseconds; 
                 }
                 catch (Exception ex)
                 {
