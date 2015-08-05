@@ -250,7 +250,7 @@ namespace dax.Gui
             IsSelected = !IsSelected;
         }
 
-        private void GridTable_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void GridTable_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
         }

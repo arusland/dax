@@ -61,7 +61,7 @@
             CanUserDeleteRows="False"
             CanUserReorderColumns="False"
             IsReadOnly="True"
-            PreviewMouseLeftButtonUp="GridTable_PreviewMouseLeftButtonUp"
+            MouseLeftButtonUp="GridTable_MouseLeftButtonUp"
             PreviewMouseWheel="GridTable_PreviewMouseWheel" />
 
         <TextBlock
