@@ -9,14 +9,14 @@ namespace dax.Db.SqlServer
     class SqlServerQueryBlock : IQueryBlock
     {
         private readonly String _query;
-        private string _connectionString;
+        private readonly string _connectionString;
         private DataTable _table;
         private int _pageIndex;
 
-        public SqlServerQueryBlock(String query, String _connectionString)
+        public SqlServerQueryBlock(String query, String connectionString)
         {
             this._query = query;
-            this._connectionString = _connectionString;
+            this._connectionString = connectionString;
         }
 
         public DataTable Table
