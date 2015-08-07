@@ -6,19 +6,26 @@ namespace dax.Document
 {
     public class Scope
     {
-        public Scope(String version, List<Block> blocks)
+        public Scope(String version, IEnumerable<Block> blocks)
         {
             Version = version;
             Blocks = blocks.ToList();
-        }        
+            Groups = Blocks.SelectMany(p => p.Groups).Distinct().ToList();
+        }
 
         public String Version
         {
             get;
             private set;
         }
-        
-        public List<Block> Blocks
+
+        public IEnumerable<Block> Blocks
+        {
+            get;
+            private set;
+        }
+
+        public IEnumerable<Group> Groups
         {
             get;
             private set;
@@ -26,7 +33,7 @@ namespace dax.Document
 
         public override String ToString()
         {
-            return String.Format("Version={0}; Blocks Count={1}", Version, Blocks.Count);
+            return String.Format("Version={0}", Version);
         }
     }
 }

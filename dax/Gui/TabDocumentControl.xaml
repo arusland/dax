@@ -121,28 +121,14 @@
                     Margin="5"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
-                    Click="buttonSearch_Click"
+                    Click="ButtonSearch_Click"
                     Content="Search"
                     FontWeight="Bold" />
             </StackPanel>
         </Grid>
 
-        <ScrollViewer
-            x:Name="scrollViewerMain"
-            x:FieldModifier="private"
-            Grid.Row="1"
-            Background="White"
-            HorizontalScrollBarVisibility="Auto">
-
-            <Grid
-                x:Name="gridBlocks"
-                x:FieldModifier="private"
-                VerticalAlignment="Top">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-            </Grid>
-        </ScrollViewer>
+        <TabControl
+            x:Name="tabControlMain"
+            Grid.Row="1" />
     </Grid>
 </UserControl>

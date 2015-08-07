@@ -6,14 +6,15 @@ namespace dax.Document
 {
     public class Block
     {
-        public Block(String title, Query query, IEnumerable<Binding> bindings, bool showOnEmpty, int order)
+        public Block(String title, Query query, IEnumerable<Binding> bindings, IEnumerable<Group> groups, bool showOnEmpty, int order)
         {
             Title = title;
             Query = query;
             ShowOnEmpty = showOnEmpty;
             Order = order;
             Bindings = bindings.ToList();
-        }                
+            Groups = groups.ToList();
+        }
 
         public String Title
         {
@@ -50,6 +51,13 @@ namespace dax.Document
             get { return Query.Variables; }
         }
 
+        public IEnumerable<Group> Groups { get; private set; }
+
+        public bool HasGroup(Group group)
+        {
+            return Groups.Any(p => p.Equals(group));
+        }
+
         public bool CanExecute(Dictionary<String, String> inputValues)
         {
             return Query.CanExecute(inputValues);
@@ -64,5 +72,6 @@ namespace dax.Document
         {
             return String.Format("Title={0}", Title);
         }
+
     }
 }

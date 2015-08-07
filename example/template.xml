@@ -25,7 +25,7 @@
 			</query>
 		</block>	
 
-		<block title="All columns (conditional)">
+		<block title="All columns (conditional)" groups="Main 1, Main 2">
 			<bindings>
 				<bind column="TABLE_NAME" field="TABLE_NAME"/>
 			</bindings>
@@ -35,7 +35,7 @@
 			</query>
 		</block>
 
-		<block title="All tables (withour vars)">			
+		<block title="All tables (withour vars)" groups="Main 2">			
 			<query>
 				select * from information_schema.tables				
 			</query>

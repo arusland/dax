@@ -86,9 +86,11 @@
     <Compile Include="Db\SqlServer\SqlServerProvider.cs" />
     <Compile Include="Db\SqlServer\SqlServerQueryBlock.cs" />
     <Compile Include="Document\Binding.cs" />
+    <Compile Include="Document\Group.cs" />
     <Compile Include="Document\QueryBasic.cs" />
     <Compile Include="Document\QueryContainer.cs" />
     <Compile Include="Extensions\ConnectionExtensions.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\XDocumentExtensions.cs" />
     <Compile Include="Gui\AboutBox.xaml.cs">
@@ -122,6 +124,9 @@
     </Compile>
     <Compile Include="Gui\TabDocumentControl.xaml.cs">
       <DependentUpon>TabDocumentControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\TabDocumentGroupControl.xaml.cs">
+      <DependentUpon>TabDocumentGroupControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\TabHeader.xaml.cs">
       <DependentUpon>TabHeader.xaml</DependentUpon>
@@ -168,6 +173,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Gui\TabDocumentControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\TabDocumentGroupControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

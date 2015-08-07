@@ -35,6 +35,24 @@ namespace dax.Core
             }
         }
 
+        public IEnumerable<Group> Groups
+        {
+            get
+            {
+                if (!String.IsNullOrEmpty(_scopeVersion))
+                {
+                    var scope = GetScope(_scopeVersion);
+
+                    if (scope != null)
+                    {
+                        return scope.Groups;
+                    }
+                }
+
+                return new Group[0];
+            }
+        }
+
         public String FilePath
         {
             get
@@ -57,6 +75,12 @@ namespace dax.Core
             private set;
         }
 
+        public int ExecutedCount
+        {
+            get;
+            private set;
+        }
+
         public String ScopeVersion
         {
             get
@@ -65,9 +89,12 @@ namespace dax.Core
             }
             private set
             {
-                _scopeVersion = value;
+                if (_scopeVersion != value)
+                {
+                    _scopeVersion = value;
 
-                RunOnUIContext(() => OnScopeVersionChanged(this, new EventArgs()));
+                    RunOnUIContext(() => OnScopeVersionChanged(this, new EventArgs()));
+                }
             }
         }
 
@@ -97,6 +124,7 @@ namespace dax.Core
 
         public void ReloadInternal(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
         {
+            ExecutedCount = 0;
             DoQueryReloadedEvent();
 
             IDbProvider dbProvider = GetQueryProvider();
@@ -119,6 +147,7 @@ namespace dax.Core
 
                 List<Task> currentTasks = new List<Task>();
                 bool cancelOperation = false;
+                ExecutedCount = acceptedBlocks.Count;
 
                 foreach (var item in acceptedBlocks)
                 {

@@ -1,13 +1,15 @@
 ﻿using dax.Core;
 using dax.Core.Events;
 using dax.Document;
+using dax.Extensions;
+using dax.Gui.Events;
+using dax.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using dax.Utils;
 
 namespace dax.Gui
 {
@@ -21,6 +23,7 @@ namespace dax.Gui
         private readonly DaxManager _daxManager;
         private readonly INotificationView _notificationView;
         private OperationState _currentState;
+        private Group _currentGroup = Group.All;
 
         public TabDocumentControl(DaxManager daxManager, INotificationView notificationView)
         {
@@ -30,6 +33,7 @@ namespace dax.Gui
             _daxManager.OnQueryReloaded += DaxManager_OnQueryReloaded;
             _daxManager.OnNewBlockAdded += DaxManager_OnNewBlockAdded;
             _daxManager.OnError += DaxManager_OnError;
+            _daxManager.OnScopeVersionChanged += DaxManager_OnScopeVersionChanged;
             InitGrids();
         }
 
@@ -67,7 +71,33 @@ namespace dax.Gui
         {
             get
             {
-                return gridBlocks.Children.Cast<TableControl>();
+                return CurrentTab.BlockControls;
+            }
+        }
+
+        private IEnumerable<TabDocumentGroupControl> TabItems
+        {
+            get
+            {
+                return tabControlMain.Items
+                    .Cast<TabItem>()
+                    .Select(p => p.Content as TabDocumentGroupControl);
+            }
+        }
+
+        private TabDocumentGroupControl CurrentTab
+        {
+            get
+            {
+                return ((TabItem)tabControlMain.SelectedItem).Content as TabDocumentGroupControl;
+            }
+        }
+
+        private TabDocumentGroupControl AllQueriesTab
+        {
+            get
+            {
+                return ((TabItem)tabControlMain.Items[0]).Content as TabDocumentGroupControl;
             }
         }
 
@@ -81,6 +111,7 @@ namespace dax.Gui
         {
             var oldInputs = InputControls.ToList();
             InitGrids();
+            InitTabs();
 
             foreach (var input in _daxManager.Inputs)
             {
@@ -101,6 +132,24 @@ namespace dax.Gui
             RefreshConnectionStatus();
         }
 
+        private void InitTabs()
+        {
+            tabControlMain.Items.Clear();
+
+            AddTabItem(Group.All);
+
+            if (tabControlMain.Items.Count > 0 && tabControlMain.SelectedItem == null)
+            {
+                tabControlMain.SelectedIndex = 0;
+            }
+        }
+
+        private void AddTabItem(Group group)
+        {
+            var item = new TabItem() { Header = group.Name, Content = new TabDocumentGroupControl(group) };
+            tabControlMain.Items.Add(item);
+        }
+
         public void InvokeSearch()
         {
             if (_currentState == OperationState.Ready)
@@ -113,16 +162,26 @@ namespace dax.Gui
 
                 inputs.ForEach(p => p.IsHighlighted = true);
 
-                var selectedQueries = BlockControls
-                    .Where(p => p.IsSelected)
+                var deselectedGroups = BlockControls
+                    .Where(p => !p.IsSelected)
                     .Select(p => p.Block)
                     .ToList();
+
+                CurrentTab.DeselectedBlocks.AddRange(deselectedGroups);
+
+                if (BlockControls.All(p => !p.IsSelected))
+                {
+                    CurrentTab.DeselectedBlocks.Clear();
+                }
+
+                _currentGroup = CurrentTab.Group;
+                List<Block> deselectedBlocks = CurrentTab.DeselectedBlocks;
 
                 _notificationView.SetStatus("Loading...");
                 buttonSearch.IsEnabled = false;
                 var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
                 var watcher = Stopwatch.StartNew();
-                var task = _daxManager.ReloadAsync(inputValues, b => BlockFilter(b, selectedQueries));
+                var task = _daxManager.ReloadAsync(inputValues, b => BlockFilter(b, _currentGroup, deselectedBlocks));
                 task.GetAwaiter().OnCompleted(() =>
                 {
                     if (_currentState == OperationState.Canceling)
@@ -132,7 +191,8 @@ namespace dax.Gui
                     else
                     {
                         watcher.Stop();
-                        _notificationView.SetStatus(String.Format("Queries executed in {0}", TimeUtils.PrettifyTime(watcher.ElapsedMilliseconds)));
+                        _notificationView.SetStatus(String.Format("Queries ({0}) executed in {1}",
+                            _daxManager.ExecutedCount, TimeUtils.PrettifyTime(watcher.ElapsedMilliseconds)));
                     }
 
                     CurrentState = OperationState.Ready;
@@ -141,9 +201,10 @@ namespace dax.Gui
             }
         }
 
-        private bool BlockFilter(Block target, List<Block> selectedBlocks)
+        private bool BlockFilter(Block target, Group currentGroup, List<Block> deselectedBlocks)
         {
-            return selectedBlocks.Count == 0 || selectedBlocks.Any(p => p.Order == target.Order);
+            return (deselectedBlocks.Count == 0 || deselectedBlocks.All(p => p.Order != target.Order))
+                && (currentGroup.IsAll || target.HasGroup(currentGroup));
         }
 
         public void InvokeCancelSearch()
@@ -217,13 +278,12 @@ namespace dax.Gui
 
         private void InitContentGrid()
         {
-            gridBlocks.Children.Clear();
-            gridBlocks.RowDefinitions.Clear();
+            TabItems.ForEach(p => p.InitContentGrid());
         }
 
         #region Event Handlers
 
-        private void buttonSearch_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void ButtonSearch_Click(object sender, RoutedEventArgs e)
         {
             if (_currentState == OperationState.Ready)
             {
@@ -239,22 +299,36 @@ namespace dax.Gui
 
         private void DaxManager_OnNewBlockAdded(object sender, NewBlockAddedEventArgs e)
         {
-            var tableItem = new TableControl(e.Block, e.QueryBlock, _notificationView);
-            tableItem.OnBindingClick += OnBinding_Click;
-            gridBlocks.Children.Add(tableItem);
-
-            while (e.Block.Order >= gridBlocks.RowDefinitions.Count)
+            if (_currentGroup.IsAll)
             {
-                gridBlocks.RowDefinitions.Add(new RowDefinition());
+                AllQueriesTab.AddBlock(e.Block, e.QueryBlock, _notificationView, BindingHandler);
             }
 
-            Grid.SetRow(tableItem, e.Block.Order);
+            CheckTabCreated();
+
+            var tab = TabItems.FirstOrDefault(p => p.Group.Equals(_currentGroup));
+
+            if (tab != null)
+            {
+                tab.AddBlock(e.Block, e.QueryBlock, _notificationView, BindingHandler);
+            }
 
             e.Canceled = _currentState == OperationState.Canceling;
             RefreshConnectionStatus();
         }
 
-        private void OnBinding_Click(object sender, Events.BindingClickEventArgs e)
+        private void CheckTabCreated()
+        {
+            if (TabItems.Count() <= 1)
+            {
+                foreach (Group group in _daxManager.Groups)
+                {
+                    AddTabItem(group);
+                }
+            }
+        }
+
+        private void BindingHandler(BindingClickEventArgs e)
         {
             var inputValue = InputControls.FirstOrDefault(p => String.Compare(p.InputName, e.Binding.Field, true) == 0);
 
@@ -284,6 +358,11 @@ namespace dax.Gui
 
                 _notificationView.ShowError(message);
             }
+        }
+
+        private void DaxManager_OnScopeVersionChanged(object sender, EventArgs e)
+        {
+            InitTabs();
         }
 
         private void ButtonReconnect_Click(object sender, RoutedEventArgs e)
