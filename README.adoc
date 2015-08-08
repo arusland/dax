@@ -117,5 +117,8 @@ If you want to support all versions of database by single project file, you can 
 
 When the dax finds *"version.query"* property it used (as sql-query) for getting database version and then found scope with the same version.
 
+== Supported Databases
+* MS Sql Server
+
 == License
 link:http://www.apache.org/licenses/LICENSE-2.0[Apache License]
