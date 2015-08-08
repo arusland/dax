@@ -79,9 +79,9 @@ namespace dax.Document
         {
             int index = 0;
             var blocks = scope.GetNodes("block")
-                .Select(p => new Block(p.GetAttribute("title"), LoadQuery(p),
-                    LoadBindings(p), LoadGroups(p.GetSafeAttribute("groups", String.Empty)),
-                    bool.Parse(p.GetSafeAttribute("showOnEmpty", "true")), index++))
+                .Select(p => new Block(p.GetAttribute("title"), LoadQuery(p, bool.Parse(p.GetSafeAttribute("skipWhenNoInput", "false"))),
+                            LoadBindings(p), LoadGroups(p.GetSafeAttribute("groups", String.Empty)),
+                            bool.Parse(p.GetSafeAttribute("showOnEmpty", "true")), index++))
                 .ToList();
 
             return blocks;
@@ -96,9 +96,9 @@ namespace dax.Document
             return binds;
         }
 
-        private Query LoadQuery(XElement block)
+        private Query LoadQuery(XElement block, bool skipWhenNoInput)
         {
-            return Query.NewQuery(block.GetNodeValue("query"));
+            return Query.NewQuery(block.GetNodeValue("query"), false, skipWhenNoInput);
         }
 
         private List<Group> LoadGroups(String groups)

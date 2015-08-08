@@ -29,13 +29,13 @@ namespace dax.Document
         public override String ToString()
         {
             return String.Format("Conent={0}", Content);
-        }       
+        }
 
-        public static Query NewQuery(String content, bool conditional = false)
+        public static Query NewQuery(String content, bool conditional, bool skipWhenNoInput)
         {
             if (QueryContainer.IsAcceptable(content))
             {
-                return new QueryContainer(content);
+                return new QueryContainer(content, skipWhenNoInput);
             }
 
             return new QueryBasic(content, conditional);

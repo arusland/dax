@@ -7,6 +7,7 @@
 		<field name="OBJECT_NAME" title="Object name"/>
 		<field name="VIEW_NAME" title="View name" allowBlank="true"/>
 		<field name="TABLE_NAME" title="Table name"/>
+		<field name="COLUMN_NAME" title="Column name"/>		
 		<field name="IS_MS_SHIPPED" title="is_ms_shipped" type="bool" default="1" enabled="false"/>
 		<field name="DATE_TEST" title="Date 1" type="date"/>
 	</input>
@@ -25,13 +26,13 @@
 			</query>
 		</block>	
 
-		<block title="All columns (conditional)" groups="Main 1, Main 2">
+		<block title="All columns (conditional)" groups="Main 1, Main 2" skipWhenNoInput="false">
 			<bindings>
 				<bind column="TABLE_NAME" field="TABLE_NAME"/>
 			</bindings>
 			<query>
 				select * from information_schema.columns
-				[[where table_name like '%{{TABLE_NAME}}%']]		
+				where 1=1 [[and table_name like '%{{TABLE_NAME}}%']] [[and column_name like '%{{COLUMN_NAME}}%']]
 			</query>
 		</block>
 

@@ -10,10 +10,11 @@ namespace dax.Document
     {
         private readonly List<Query> _subQueries;
 
-        public QueryContainer(String content)
+        public QueryContainer(String content, bool skipWhenNoInput)
         {
             Content = content;
-            _subQueries = ParseSubqueries(content);
+            SkipWhenNoInput = skipWhenNoInput;
+            _subQueries = ParseSubqueries(content, SkipWhenNoInput);
         }
 
         public override string Content
@@ -27,6 +28,13 @@ namespace dax.Document
             get;
             protected set;
         }
+
+        public bool SkipWhenNoInput
+        {
+            get;
+            private set;
+        }
+
 
         public override IEnumerable<string> Variables
         {
@@ -50,17 +58,30 @@ namespace dax.Document
 
         public override bool CanExecute(Dictionary<string, string> inputValues)
         {
-            var notConditionals = _subQueries.Where(p => !p.Conditional).ToList();
+            var notConditionalQueries = _subQueries.Where(p => !p.Conditional).ToList();
 
-            return notConditionals.Count == 0 || notConditionals.All(p => p.CanExecute(inputValues));
+            bool canExecute = notConditionalQueries.Count == 0 || notConditionalQueries.All(p => p.CanExecute(inputValues));
+
+            if (SkipWhenNoInput && canExecute)
+            {
+                var conditionalQueries = _subQueries.Where(p => p.Conditional).ToList();
+
+                if (conditionalQueries.Count > 0)
+                {
+                    // we can execute block when we have at least one input value for conditional subquery in case SkipWhenNoInput=true
+                    canExecute = conditionalQueries.Any(p => p.CanExecute(inputValues));
+                }
+            }
+
+            return canExecute;
         }
 
         public static bool IsAcceptable(String value)
         {
             return IndexOfAny(value) >= 0;
         }
-        
-        private static List<Query> ParseSubqueries(String content)
+
+        private static List<Query> ParseSubqueries(String content, bool skipWhenNoInput)
         {
             List<Query> result = new List<Query>();
             String parsing = content;
@@ -72,13 +93,13 @@ namespace dax.Document
                 if (index == -1)
                 {
                     // last query block found
-                    result.Add(Query.NewQuery(parsing, false));
+                    result.Add(Query.NewQuery(parsing, false, false));
                     break;
                 }
 
                 if (index > 0)
                 {
-                    result.Add(Query.NewQuery(parsing.Substring(0, index), false));
+                    result.Add(Query.NewQuery(parsing.Substring(0, index), false, false));
                 }
 
                 if (parsing[index] == ']')
@@ -104,7 +125,7 @@ namespace dax.Document
                 if (indexEnd > index)
                 {
                     String block = parsing.Substring(index, indexEnd - index);
-                    result.Add(Query.NewQuery(block, true));
+                    result.Add(Query.NewQuery(block, true, skipWhenNoInput));
                 }
 
                 indexEnd += 2;
@@ -123,6 +144,6 @@ namespace dax.Document
         private static int IndexOfAny(String value)
         {
             return value.IndexOfAny("[[", "]]");
-        }        
+        }
     }
 }
