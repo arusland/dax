@@ -33,7 +33,7 @@ namespace dax.Gui
             _daxManager.OnQueryReloaded += DaxManager_OnQueryReloaded;
             _daxManager.OnNewBlockAdded += DaxManager_OnNewBlockAdded;
             _daxManager.OnError += DaxManager_OnError;
-            _daxManager.OnScopeVersionChanged += DaxManager_OnScopeVersionChanged;
+            _daxManager.OnGroupsChanged += DaxManager_OnGroupsChanged;
             InitGrids();
         }
 
@@ -360,7 +360,7 @@ namespace dax.Gui
             }
         }
 
-        private void DaxManager_OnScopeVersionChanged(object sender, EventArgs e)
+        private void DaxManager_OnGroupsChanged(object sender, EventArgs e)
         {
             InitTabs();
         }

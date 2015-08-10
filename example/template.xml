@@ -1,6 +1,6 @@
 <project name="System db">
 	<props>
-		<prop name="version.query" value="select 'x.x'"/>
+		<!--<prop name="version.query" value="select 'x.x'"/>-->
 	</props>
 
 	<input>
@@ -12,7 +12,7 @@
 		<field name="DATE_TEST" title="Date 1" type="date"/>
 	</input>
 
-	<scope version="x.x">
+	<scope >
 		<block title="Sys objects">
 			<query>
 				select * from sys.objects where name like '%{{OBJECT_NAME}}%'

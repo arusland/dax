@@ -15,11 +15,13 @@ namespace dax.Core
         private DaxDocument _document;
         private String _scopeVersion;
         private readonly TaskScheduler _uiContext;
+        private List<Group> _groups;
         public event EventHandler<QueryReloadedEventArgs> OnQueryReloaded;
         public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
         public event EventHandler<ErrorEventArgs> OnError;
         public event EventHandler<QueryProviderEventArgs> OnQueryProvider;
         public event EventHandler<EventArgs> OnScopeVersionChanged;
+        public event EventHandler<EventArgs> OnGroupsChanged;
 
         public DaxManager(String filePath, TaskScheduler uiContext)
         {
@@ -39,17 +41,19 @@ namespace dax.Core
         {
             get
             {
-                if (!String.IsNullOrEmpty(_scopeVersion))
+                return _groups ?? new List<Group>();
+            }
+            private set
+            {
+                if (_groups == null || !_groups.SequenceEqual(value))
                 {
-                    var scope = GetScope(_scopeVersion);
+                    _groups = (List<Group>)value;
 
-                    if (scope != null)
+                    if (OnGroupsChanged != null)
                     {
-                        return scope.Groups;
+                        RunOnUIContext(() => OnGroupsChanged(this, EventArgs.Empty));
                     }
                 }
-
-                return new Group[0];
             }
         }
 
@@ -93,7 +97,7 @@ namespace dax.Core
                 {
                     _scopeVersion = value;
 
-                    RunOnUIContext(() => OnScopeVersionChanged(this, new EventArgs()));
+                    RunOnUIContext(() => OnScopeVersionChanged(this, EventArgs.Empty));
                 }
             }
         }
@@ -134,6 +138,7 @@ namespace dax.Core
                 String version = GetVersion(dbProvider);
                 Scope scope = GetScope(version);
                 ScopeVersion = scope.Version;
+                Groups = scope.Groups.ToList();
                 Dictionary<Block, IQueryBlock> acceptedBlocks = new Dictionary<Block, IQueryBlock>();
 
                 foreach (Block block in scope.Blocks)
