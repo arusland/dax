@@ -1,7 +1,6 @@
 ﻿using dax.Core;
 using dax.Core.Events;
 using dax.Document;
-using dax.Extensions;
 using dax.Gui.Events;
 using dax.Utils;
 using System;
@@ -278,7 +277,21 @@ namespace dax.Gui
 
         private void InitContentGrid()
         {
-            TabItems.ForEach(p => p.InitContentGrid());
+            if (tabControlMain.Items.Count > 0)
+            {
+                if (_currentGroup.IsAll)
+                {
+                    AllQueriesTab.InitContentGrid();
+                    return;
+                }
+
+                var tab = TabItems.FirstOrDefault(p => p.Group.Equals(_currentGroup));
+
+                if (tab != null)
+                {
+                    tab.InitContentGrid();
+                }
+            }
         }
 
         #region Event Handlers
