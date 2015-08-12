@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Ruslan Absalyamov")]
 [assembly: AssemblyProduct("DAX - Data Explorer")]
-[assembly: AssemblyCopyright("Copyleft © Ruslan Absalyamov, 2015")]
+[assembly: AssemblyCopyright("Copyright © Ruslan Absalyamov, 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
