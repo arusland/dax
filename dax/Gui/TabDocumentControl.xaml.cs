@@ -21,7 +21,6 @@ using dax.Gui.Events;
 using dax.Utils;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,7 +36,6 @@ namespace dax.Gui
 
         private readonly DaxManager _daxManager;
         private readonly INotificationView _notificationView;
-        private OperationState _currentState;
         private Group _currentGroup = Group.All;
 
         public TabDocumentControl(DaxManager daxManager, INotificationView notificationView)
@@ -49,6 +47,8 @@ namespace dax.Gui
             _daxManager.OnNewBlockAdded += DaxManager_OnNewBlockAdded;
             _daxManager.OnError += DaxManager_OnError;
             _daxManager.OnGroupsChanged += DaxManager_OnGroupsChanged;
+            _daxManager.OnStateChanged += DaxManager_OnStateChanged;
+            _daxManager.OnQueryFinished += DaxManager_OnQueryFinished;
             InitGrids();
         }
 
@@ -62,15 +62,6 @@ namespace dax.Gui
             get
             {
                 return _daxManager.FilePath;
-            }
-        }
-
-        private OperationState CurrentState
-        {
-            set
-            {
-                _currentState = value;
-                RefreshState();
             }
         }
 
@@ -167,7 +158,7 @@ namespace dax.Gui
 
         public void InvokeSearch()
         {
-            if (_currentState == OperationState.Ready)
+            if (_daxManager.CanSearch)
             {
                 InputControls.ToList().ForEach(p => p.IsHighlighted = false);
 
@@ -192,27 +183,16 @@ namespace dax.Gui
                 _currentGroup = CurrentTab.Group;
                 List<Block> deselectedBlocks = CurrentTab.DeselectedBlocks;
 
-                _notificationView.SetStatus("Loading...");
-                buttonSearch.IsEnabled = false;
                 var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
-                var watcher = Stopwatch.StartNew();
-                var task = _daxManager.ReloadAsync(inputValues, b => BlockFilter(b, _currentGroup, deselectedBlocks));
-                task.GetAwaiter().OnCompleted(() =>
-                {
-                    if (_currentState == OperationState.Canceling)
-                    {
-                        _notificationView.SetStatus("Operation canceled by user");
-                    }
-                    else
-                    {
-                        watcher.Stop();
-                        _notificationView.SetStatus(String.Format("Queries ({0}) executed in {1}",
-                            _daxManager.ExecutedCount, TimeUtils.PrettifyTime(watcher.ElapsedMilliseconds)));
-                    }
+                _daxManager.SearchAsync(inputValues, b => BlockFilter(b, _currentGroup, deselectedBlocks));
+            }
+        }
 
-                    CurrentState = OperationState.Ready;
-                });
-                CurrentState = OperationState.Searching;
+        private void InvokeCancel()
+        {
+            if (_daxManager.CanCancel)
+            {
+                _daxManager.Cancel();
             }
         }
 
@@ -222,15 +202,6 @@ namespace dax.Gui
                 && (currentGroup.IsAll || target.HasGroup(currentGroup));
         }
 
-        public void InvokeCancelSearch()
-        {
-            if (_currentState == OperationState.Searching)
-            {
-                _notificationView.SetStatus("Canceling...");
-                CurrentState = OperationState.Canceling;
-            }
-        }
-
         private void RefreshConnectionStatus()
         {
             buttonReconnect.Content = _daxManager.IsConnected ? "Reconnect" : "Connect";
@@ -238,7 +209,7 @@ namespace dax.Gui
 
         private void RefreshState()
         {
-            switch (_currentState)
+            switch (_daxManager.CurrentState)
             {
                 case OperationState.Ready:
                     buttonSearch.Content = "Search";
@@ -251,15 +222,10 @@ namespace dax.Gui
                     buttonSearch.IsEnabled = true;
                     buttonReconnect.IsEnabled = false;
                     buttonReload.IsEnabled = false;
-                    break;
-                case OperationState.Canceling:
-                    buttonSearch.Content = "Canceling...";
-                    buttonSearch.IsEnabled = false;
-                    buttonReconnect.IsEnabled = false;
-                    buttonReload.IsEnabled = false;
+                    _notificationView.SetStatus("Loading...");
                     break;
                 default:
-                    throw new InvalidOperationException("Unsupported state: " + _currentState);
+                    throw new InvalidOperationException("Unsupported state: " + _daxManager.CurrentState);
             }
         }
 
@@ -312,15 +278,15 @@ namespace dax.Gui
 
         #region Event Handlers
 
-        private void ButtonSearch_Click(object sender, RoutedEventArgs e)
+        private void ButtonSearchOrCancel_Click(object sender, RoutedEventArgs e)
         {
-            if (_currentState == OperationState.Ready)
+            if (_daxManager.CanSearch)
             {
                 InvokeSearch();
             }
-            else if (_currentState == OperationState.Searching)
+            else if (_daxManager.CanCancel)
             {
-                InvokeCancelSearch();
+                InvokeCancel();
             }
 
             RefreshConnectionStatus();
@@ -342,7 +308,6 @@ namespace dax.Gui
                 tab.AddBlock(e.Block, e.QueryBlock, _notificationView, BindingHandler);
             }
 
-            e.Canceled = _currentState == OperationState.Canceling;
             RefreshConnectionStatus();
         }
 
@@ -436,6 +401,24 @@ namespace dax.Gui
         {
             BlockControls.ToList().ForEach(p => p.IsSelected = false);
             InvokeSearch();
+        }
+
+        private void DaxManager_OnStateChanged(object sender, EventArgs e)
+        {
+            RefreshState();
+        }
+
+        private void DaxManager_OnQueryFinished(object sender, QueryFinishedEventArgs e)
+        {
+            if (e.Canceled)
+            {
+                _notificationView.SetStatus("Operation canceled by user");
+            }
+            else
+            {
+                _notificationView.SetStatus(String.Format("Queries ({0}) executed in {1}",
+                            e.QueryCount, TimeUtils.PrettifyTime(e.ElapsedTime)));
+            }
         }
 
         #endregion

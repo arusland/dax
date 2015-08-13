@@ -66,9 +66,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Core\BlocksExecutor.cs" />
     <Compile Include="Core\DaxManager.cs" />
     <Compile Include="Core\Events\NewBlockAddedEventArgs.cs" />
     <Compile Include="Core\Events\ErrorEventArgs.cs" />
+    <Compile Include="Core\Events\QueryFinishedEventArgs.cs" />
     <Compile Include="Core\Events\QueryProviderEventArgs.cs" />
     <Compile Include="Core\Events\QueryReloadedEventArgs.cs" />
     <Compile Include="Db\Connect\ConnectionRepository.cs" />
@@ -118,7 +120,7 @@
       <DependentUpon>InputControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Document\InputType.cs" />
-    <Compile Include="Gui\OperationState.cs" />
+    <Compile Include="Core\OperationState.cs" />
     <Compile Include="Gui\StartUpPageControl.xaml.cs">
       <DependentUpon>StartUpPageControl.xaml</DependentUpon>
     </Compile>

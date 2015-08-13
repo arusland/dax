@@ -14,27 +14,38 @@
  * limitations under the License.
  */
 
-using dax.Db;
-using dax.Document;
 using System;
 
 namespace dax.Core.Events
 {
-    public class NewBlockAddedEventArgs : EventArgs
+    public class QueryFinishedEventArgs : EventArgs
     {
-        public NewBlockAddedEventArgs(Block block, IQueryBlock queryBlock)
+        public readonly static QueryFinishedEventArgs CanceledEventArgs = new QueryFinishedEventArgs();
+
+        public QueryFinishedEventArgs(int queryCount, long elapsedTime)
         {
-            Block = block;
-            QueryBlock = queryBlock;
+            QueryCount = queryCount;
+            ElapsedTime = elapsedTime;
         }
 
-        public Block Block
+        private QueryFinishedEventArgs()
+        {
+            Canceled = true;
+        }
+
+        public int QueryCount
         {
             get;
             private set;
         }
 
-        public IQueryBlock QueryBlock
+        public long ElapsedTime
+        {
+            get;
+            private set;
+        }
+
+        public bool Canceled
         {
             get;
             private set;

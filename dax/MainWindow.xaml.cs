@@ -25,8 +25,10 @@ using dax.Utils;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -90,7 +92,7 @@ namespace dax
         {
             try
             {
-                DaxManager daxManager = new DaxManager(filePath, TaskScheduler.FromCurrentSynchronizationContext());
+                DaxManager daxManager = new DaxManager(filePath, SynchronizationContext.Current);
                 daxManager.OnQueryProvider += DaxManager_OnQueryProvider;
                 daxManager.OnScopeVersionChanged += DaxManager_OnScopeVersionChanged;
 
@@ -294,7 +296,7 @@ namespace dax
 
                 if (doc != null)
                 {
-                    doc.InvokeCancelSearch();
+                    doc.Manager.Cancel();
                 }
             }
         }

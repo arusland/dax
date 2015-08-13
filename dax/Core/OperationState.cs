@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-namespace dax.Gui
+namespace dax.Core
 {
     public enum OperationState
     {
         Ready = 0,
 
-        Searching,
-
-        Canceling
+        Searching
     }
 }

@@ -69,7 +69,7 @@
                     Grid.Row="2"
                     Margin="3,0,3,3"
                     VerticalAlignment="Top">
-                    <Hyperlink Click="SelectAllBlocks_Clicked">All Blocks</Hyperlink>
+                    <Hyperlink Click="SelectAllBlocks_Clicked">All Queries</Hyperlink>
                 </TextBlock>
 
                 <TextBlock
@@ -77,7 +77,7 @@
                     Grid.Row="2"
                     Margin="3,0,3,3"
                     VerticalAlignment="Top">
-                    <Hyperlink Click="SelectNoneBlocks_Clicked">None Blocks</Hyperlink>
+                    <Hyperlink Click="SelectNoneBlocks_Clicked">None Queries</Hyperlink>
                 </TextBlock>
 
                 <TextBlock
@@ -85,7 +85,7 @@
                     Grid.Row="2"
                     Margin="3,0,3,3"
                     VerticalAlignment="Top">
-                    <Hyperlink Click="ResetBlocks_Clicked">Reset Blocks</Hyperlink>
+                    <Hyperlink Click="ResetBlocks_Clicked">Reset Queries</Hyperlink>
                 </TextBlock>
 
             </StackPanel>
@@ -121,7 +121,7 @@
                     Margin="5"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
-                    Click="ButtonSearch_Click"
+                    Click="ButtonSearchOrCancel_Click"
                     Content="Search"
                     FontWeight="Bold" />
             </StackPanel>

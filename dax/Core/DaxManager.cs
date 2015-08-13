@@ -21,6 +21,7 @@ using dax.Document;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace dax.Core
@@ -30,19 +31,25 @@ namespace dax.Core
         private const String PROPERTY_QUERY_VERSION = "version.query";
         private DaxDocument _document;
         private String _scopeVersion;
-        private readonly TaskScheduler _uiContext;
+        //private readonly TaskScheduler _uiContext;
         private List<Group> _groups;
+        private OperationState _currentState;
+        private readonly SynchronizationContext syncContext;
+        private readonly List<BlocksExecutor> _executingBlocks = new List<BlocksExecutor>();
         public event EventHandler<QueryReloadedEventArgs> OnQueryReloaded;
         public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
         public event EventHandler<ErrorEventArgs> OnError;
         public event EventHandler<QueryProviderEventArgs> OnQueryProvider;
         public event EventHandler<EventArgs> OnScopeVersionChanged;
         public event EventHandler<EventArgs> OnGroupsChanged;
+        public event EventHandler<EventArgs> OnStateChanged;
+        public event EventHandler<QueryFinishedEventArgs> OnQueryFinished;
 
-        public DaxManager(String filePath, TaskScheduler uiContext)
+        public DaxManager(String filePath, SynchronizationContext syncContext)
         {
-            _uiContext = uiContext;
+            //_uiContext = uiContext;
             _document = DaxDocument.Load(filePath);
+            this.syncContext = syncContext;
         }
 
         public IEnumerable<Input> Inputs
@@ -118,6 +125,36 @@ namespace dax.Core
             }
         }
 
+        public OperationState CurrentState
+        {
+            get { return _currentState; }
+            private set
+            {
+                if (_currentState != value)
+                {
+                    _currentState = value;
+
+                    RunOnUIContext(() => OnStateChanged(this, EventArgs.Empty), true);
+                }
+            }
+        }
+
+        public bool CanCancel
+        {
+            get
+            {
+                return CurrentState == OperationState.Searching;
+            }
+        }
+
+        public bool CanSearch
+        {
+            get
+            {
+                return CurrentState == OperationState.Ready;
+            }
+        }
+
         public void ReloadDocument()
         {
             try
@@ -130,11 +167,11 @@ namespace dax.Core
             }
         }
 
-        public void Reload(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
+        public void Search(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
         {
             try
             {
-                ReloadInternal(inputValues, blockPredicate);
+                SearchInternal(inputValues, blockPredicate);
             }
             catch (Exception ex)
             {
@@ -142,9 +179,49 @@ namespace dax.Core
             }
         }
 
-        public void ReloadInternal(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
+        public async Task SearchAsync(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
         {
+            Task task = Task.Factory.StartNew(() => Search(inputValues, blockPredicate));
+
+            await task;
+        }
+
+        public Task Reconnect()
+        {
+            return Task.Factory.StartNew(() =>
+            {
+                GetQueryProvider(true);
+            });
+        }
+
+        public void Cancel()
+        {
+            if (CanCancel)
+            {
+                lock (_executingBlocks)
+                {
+                    _executingBlocks.ForEach(p => p.Cancel());
+
+                    // remove canceled executors
+                    _executingBlocks.Where(p => p.Finished)
+                        .ToList()
+                        .ForEach(p => _executingBlocks.Remove(p));
+                }
+
+                DoQueryFinishedCanceledEvent();
+                CurrentState = OperationState.Ready;
+            }
+        }
+
+        private void SearchInternal(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
+        {
+            if (!CanSearch)
+            {
+                return;
+            }
+
             ExecutedCount = 0;
+            CurrentState = OperationState.Searching;
             DoQueryReloadedEvent();
 
             IDbProvider dbProvider = GetQueryProvider();
@@ -166,55 +243,30 @@ namespace dax.Core
                     }
                 }
 
-                List<Task> currentTasks = new List<Task>();
-                bool cancelOperation = false;
                 ExecutedCount = acceptedBlocks.Count;
 
-                foreach (var item in acceptedBlocks)
+                var executor = BlocksExecutor.Create(acceptedBlocks);
+                AddExecutor(executor);
+                executor.Execute(DoNewBlockAddedEvent);
+
+                if (!executor.Canceled)
                 {
-                    Block block = item.Key;
-                    IQueryBlock queryBlock = item.Value;
-
-                    var task = queryBlock.UpdateAsync();
-                    currentTasks.Add(task);
-
-                    task.GetAwaiter().OnCompleted(() =>
-                        {
-                            if (!cancelOperation && (!queryBlock.IsEmpty || block.ShowOnEmpty))
-                            {
-                                bool canceled = DoNewBlockAddedEvent(block, queryBlock);
-
-                                if (canceled)
-                                {
-                                    cancelOperation = true;
-                                }
-                            }
-                        });
+                    DoQueryFinishedEvent(executor);
+                    CurrentState = OperationState.Ready;
                 }
-
-                while (!Task.WaitAll(currentTasks.ToArray(), 100))
-                {
-                    if (cancelOperation)
-                    {
-                        break;
-                    }
-                }
+            }
+            else
+            {
+                CurrentState = OperationState.Ready;
             }
         }
 
-        public async Task ReloadAsync(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
+        private void AddExecutor(BlocksExecutor executor)
         {
-            Task task = Task.Factory.StartNew(() => Reload(inputValues, blockPredicate));
-
-            await task;
-        }
-
-        public Task Reconnect()
-        {
-            return Task.Factory.StartNew(() =>
+            lock (_executingBlocks)
             {
-                GetQueryProvider(true);
-            });
+                _executingBlocks.Add(executor);
+            }
         }
 
         private void DoQueryReloadedEvent()
@@ -235,11 +287,19 @@ namespace dax.Core
             return ea.Provider;
         }
 
-        private bool DoNewBlockAddedEvent(Block block, IQueryBlock queryBlock)
+        private void DoNewBlockAddedEvent(Block block, IQueryBlock queryBlock)
         {
-            var ea = new NewBlockAddedEventArgs(block, queryBlock);
-            RunOnUIContext(() => OnNewBlockAdded(this, ea));
-            return ea.Canceled;
+            RunOnUIContext(() => OnNewBlockAdded(this, new NewBlockAddedEventArgs(block, queryBlock)));
+        }
+
+        private void DoQueryFinishedEvent(BlocksExecutor executor)
+        {
+            RunOnUIContext(() => OnQueryFinished(this, new QueryFinishedEventArgs(executor.ExecutedQueriesCount, executor.ElapsedTime)), true);
+        }
+
+        private void DoQueryFinishedCanceledEvent()
+        {
+            RunOnUIContext(() => OnQueryFinished(this, QueryFinishedEventArgs.CanceledEventArgs), true);
         }
 
         private void DoErrorEvent(Exception error)
@@ -307,20 +367,20 @@ namespace dax.Core
             return prop;
         }
 
-        private Task RunOnUIContext(Action action, bool isAsync = false)
+        private void RunOnUIContext(Action action, bool isAsync = false)
         {
-            var token = Task.Factory.CancellationToken;
-            var task = Task.Factory.StartNew(() =>
-            {
-                action();
-            }, token, TaskCreationOptions.None, _uiContext);
+            // TODO: remove isAsync
+            SynchronizeCall(syncContext, action);
+        }
 
-            if (!isAsync)
-            {
-                task.Wait();
-            }
-
-            return task;
+        /// <summary>
+        /// Allows performing the given func synchronously on the thread the dispatcher is associated with.
+        /// </summary>
+        /// <param name="syncContext">The synchronization object.</param>
+        /// <param name="action">The func (function) to call.</param>
+        public static void SynchronizeCall(SynchronizationContext syncContext, Action action)
+        {
+            syncContext.Send((o) => action(), null);
         }
     }
 }
