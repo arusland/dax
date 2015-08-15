@@ -31,10 +31,9 @@ namespace dax.Core
         private const String PROPERTY_QUERY_VERSION = "version.query";
         private DaxDocument _document;
         private String _scopeVersion;
-        //private readonly TaskScheduler _uiContext;
         private List<Group> _groups;
         private OperationState _currentState;
-        private readonly SynchronizationContext syncContext;
+        private readonly SynchronizationContext _syncContext;
         private readonly List<BlocksExecutor> _executingBlocks = new List<BlocksExecutor>();
         public event EventHandler<QueryReloadedEventArgs> OnQueryReloaded;
         public event EventHandler<NewBlockAddedEventArgs> OnNewBlockAdded;
@@ -47,9 +46,8 @@ namespace dax.Core
 
         public DaxManager(String filePath, SynchronizationContext syncContext)
         {
-            //_uiContext = uiContext;
             _document = DaxDocument.Load(filePath);
-            this.syncContext = syncContext;
+            _syncContext = syncContext;
         }
 
         public IEnumerable<Input> Inputs
@@ -64,6 +62,16 @@ namespace dax.Core
         {
             get
             {
+                if (_groups == null)
+                {
+                    var scope = _document.Scopes.FirstOrDefault();
+
+                    if (scope != null)
+                    {
+                        _groups = scope.Groups.ToList();
+                    }
+                }
+
                 return _groups ?? new List<Group>();
             }
             private set
@@ -369,7 +377,7 @@ namespace dax.Core
 
         private void RunOnUIContext(Action action)
         {
-            SynchronizeCall(syncContext, action);
+            SynchronizeCall(_syncContext, action);
         }
 
         /// <summary>

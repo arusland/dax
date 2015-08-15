@@ -17,6 +17,7 @@
 using dax.Core;
 using dax.Core.Events;
 using dax.Document;
+using dax.Extensions;
 using dax.Gui.Events;
 using dax.Utils;
 using System;
@@ -143,6 +144,14 @@ namespace dax.Gui
             tabControlMain.Items.Clear();
 
             AddTabItem(Group.All);
+            CreateGroupTabs();
+
+            int index = TabItems.ToList().FindIndex(p => p.Group.Equals(_currentGroup));
+
+            if (index >= 0)
+            {
+                tabControlMain.SelectedIndex = index;
+            }
 
             if (tabControlMain.Items.Count > 0 && tabControlMain.SelectedItem == null)
             {
@@ -299,8 +308,6 @@ namespace dax.Gui
                 AllQueriesTab.AddBlock(e.Block, e.QueryBlock, _notificationView, BindingHandler);
             }
 
-            CheckTabCreated();
-
             var tab = TabItems.FirstOrDefault(p => p.Group.Equals(_currentGroup));
 
             if (tab != null)
@@ -311,14 +318,11 @@ namespace dax.Gui
             RefreshConnectionStatus();
         }
 
-        private void CheckTabCreated()
+        private void CreateGroupTabs()
         {
             if (TabItems.Count() <= 1)
             {
-                foreach (Group group in _daxManager.Groups)
-                {
-                    AddTabItem(group);
-                }
+                _daxManager.Groups.ForEach(p => AddTabItem(p));
             }
         }
 
