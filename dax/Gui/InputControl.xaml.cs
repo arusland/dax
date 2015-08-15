@@ -123,6 +123,12 @@ namespace dax.Gui
                 bool selected = true == checkBoxEnabled.IsChecked;
                 textBoxValue.IsEnabled = selected;
                 checkBoxEnabled.Foreground = selected ? Brushes.Black : Brushes.Gray;
+
+                if (selected)
+                {
+                    textBoxValue.SelectAll();
+                    textBoxValue.Focus();
+                }
             }
         }
 
