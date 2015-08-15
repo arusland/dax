@@ -134,7 +134,7 @@ namespace dax.Core
                 {
                     _currentState = value;
 
-                    RunOnUIContext(() => OnStateChanged(this, EventArgs.Empty), true);
+                    RunOnUIContext(() => OnStateChanged(this, EventArgs.Empty));
                 }
             }
         }
@@ -294,12 +294,12 @@ namespace dax.Core
 
         private void DoQueryFinishedEvent(BlocksExecutor executor)
         {
-            RunOnUIContext(() => OnQueryFinished(this, new QueryFinishedEventArgs(executor.ExecutedQueriesCount, executor.ElapsedTime)), true);
+            RunOnUIContext(() => OnQueryFinished(this, new QueryFinishedEventArgs(executor.ExecutedQueriesCount, executor.ElapsedTime)));
         }
 
         private void DoQueryFinishedCanceledEvent()
         {
-            RunOnUIContext(() => OnQueryFinished(this, QueryFinishedEventArgs.CanceledEventArgs), true);
+            RunOnUIContext(() => OnQueryFinished(this, QueryFinishedEventArgs.CanceledEventArgs));
         }
 
         private void DoErrorEvent(Exception error)
@@ -313,11 +313,11 @@ namespace dax.Core
 
             if (queryException != null)
             {
-                RunOnUIContext(() => OnError(this, new ErrorEventArgs(queryException.InnerException.Message, queryException.Query)), true);
+                RunOnUIContext(() => OnError(this, new ErrorEventArgs(queryException.InnerException.Message, queryException.Query)));
             }
             else
             {
-                RunOnUIContext(() => OnError(this, new ErrorEventArgs(error.Message)), true);
+                RunOnUIContext(() => OnError(this, new ErrorEventArgs(error.Message)));
             }
         }
 
@@ -367,9 +367,8 @@ namespace dax.Core
             return prop;
         }
 
-        private void RunOnUIContext(Action action, bool isAsync = false)
+        private void RunOnUIContext(Action action)
         {
-            // TODO: remove isAsync
             SynchronizeCall(syncContext, action);
         }
 
