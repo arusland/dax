@@ -312,6 +312,11 @@ namespace dax.Core
 
         private void DoErrorEvent(Exception error)
         {
+            if (CurrentState != OperationState.Ready)
+            {
+                CurrentState = OperationState.Ready;
+            }
+
             if (error is AggregateException)
             {
                 error = ((AggregateException)error).InnerExceptions[0];
