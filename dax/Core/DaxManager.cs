@@ -253,6 +253,9 @@ namespace dax.Core
 
                 ExecutedCount = acceptedBlocks.Count;
 
+                var notAcceptedBlocks = scope.Blocks.Where(p => !acceptedBlocks.ContainsKey(p)).ToList();
+                notAcceptedBlocks.ForEach(p => DoNewBlockAddedEvent(p, DummyQueryBlock.Instance));
+
                 var executor = BlocksExecutor.Create(acceptedBlocks);
                 AddExecutor(executor);
                 executor.Execute(DoNewBlockAddedEvent);

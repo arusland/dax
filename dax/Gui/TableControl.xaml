@@ -75,6 +75,7 @@
             Visibility="Collapsed" />
 
         <StackPanel
+            x:Name="stackPanelControl"
             Grid.Column="1"
             Grid.Row="2"
             Orientation="Horizontal">

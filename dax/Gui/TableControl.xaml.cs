@@ -44,6 +44,14 @@ namespace dax.Gui
             _block = block;
             _queryBlock = queryBlock;
             _notificationView = notificationView;
+
+            if (queryBlock.IsEmpty)
+            {
+                IsSelected = false;
+                gridTable.Visibility = Visibility.Collapsed;
+                stackPanelControl.Visibility = Visibility.Collapsed;
+            }
+
             RefreshView();
         }
 
@@ -120,6 +128,7 @@ namespace dax.Gui
             labelTitle.ToolTip = labelTooltip;
             labelTitle.Text = _block.Title;
             labelElapsedTime.Text = TimeUtils.PrettifyTime(_queryBlock.ElapsedTime);
+            labelElapsedTime.Visibility = _queryBlock.ElapsedTime > 0 ? Visibility.Visible : Visibility.Collapsed;
             textBoxCurrentPage.Text = (_queryBlock.PageIndex + 1).ToString();
         }
 

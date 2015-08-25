@@ -182,6 +182,7 @@ namespace dax.Gui
                     .Select(p => p.Block)
                     .ToList();
 
+                CurrentTab.DeselectedBlocks.Clear();
                 CurrentTab.DeselectedBlocks.AddRange(deselectedGroups);
 
                 if (BlockControls.All(p => !p.IsSelected))
@@ -310,7 +311,7 @@ namespace dax.Gui
 
             var tab = TabItems.FirstOrDefault(p => p.Group.Equals(_currentGroup));
 
-            if (tab != null)
+            if (tab != null && e.Block.Groups.Contains(tab.Group))
             {
                 tab.AddBlock(e.Block, e.QueryBlock, _notificationView, BindingHandler);
             }
