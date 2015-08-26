@@ -175,11 +175,11 @@ namespace dax.Core
             }
         }
 
-        public void Search(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
+        public void Search(Dictionary<String, String> inputValues, Func<Block, bool> allowBlockPredicate)
         {
             try
             {
-                SearchInternal(inputValues, blockPredicate);
+                SearchInternal(inputValues, allowBlockPredicate);
             }
             catch (Exception ex)
             {
@@ -187,9 +187,9 @@ namespace dax.Core
             }
         }
 
-        public async Task SearchAsync(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
+        public async Task SearchAsync(Dictionary<String, String> inputValues, Func<Block, bool> allowBlockPredicate)
         {
-            Task task = Task.Factory.StartNew(() => Search(inputValues, blockPredicate));
+            Task task = Task.Factory.StartNew(() => Search(inputValues, allowBlockPredicate));
 
             await task;
         }
@@ -221,7 +221,7 @@ namespace dax.Core
             }
         }
 
-        private void SearchInternal(Dictionary<String, String> inputValues, Func<Block, bool> blockPredicate)
+        private void SearchInternal(Dictionary<String, String> inputValues, Func<Block, bool> allowBlockPredicate)
         {
             if (!CanSearch)
             {
@@ -244,17 +244,25 @@ namespace dax.Core
 
                 foreach (Block block in scope.Blocks)
                 {
-                    if (block.CanExecute(inputValues) && blockPredicate(block))
+                    if (block.CanExecute(inputValues))
                     {
-                        String query = block.BuildQuery(inputValues);
-                        acceptedBlocks.Add(block, dbProvider.CreateBlock(query));
+                        if (allowBlockPredicate(block))
+                        {
+                            String query = block.BuildQuery(inputValues);
+                            acceptedBlocks.Add(block, dbProvider.CreateBlock(query));
+                        }
+                        else
+                        {
+                            DoNewBlockAddedEvent(block, DummyQueryBlock.SkippedInstance);
+                        }
+                    }
+                    else
+                    {
+                        DoNewBlockAddedEvent(block, DummyQueryBlock.Make(block.Query.Content));
                     }
                 }
 
-                ExecutedCount = acceptedBlocks.Count;
-
-                var notAcceptedBlocks = scope.Blocks.Where(p => !acceptedBlocks.ContainsKey(p)).ToList();
-                notAcceptedBlocks.ForEach(p => DoNewBlockAddedEvent(p, DummyQueryBlock.Instance));
+                ExecutedCount = acceptedBlocks.Count;                
 
                 var executor = BlocksExecutor.Create(acceptedBlocks);
                 AddExecutor(executor);

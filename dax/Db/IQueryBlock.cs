@@ -42,6 +42,11 @@ namespace dax.Db
             get;
         }
 
+        bool IsSkipped
+        {
+            get;
+        }
+
         string QueryText
         {
             get;

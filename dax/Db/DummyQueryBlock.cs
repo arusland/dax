@@ -5,10 +5,15 @@ namespace dax.Db
 {
     public sealed class DummyQueryBlock : IQueryBlock
     {
-        public readonly static DummyQueryBlock Instance = new DummyQueryBlock();
+        public readonly static DummyQueryBlock SkippedInstance = new DummyQueryBlock(true, "[Query skipped]");
 
-        private DummyQueryBlock()
+        private readonly String _query;
+        private readonly bool _skipped;
+
+        private DummyQueryBlock(bool skipped, String query)
         {
+            _skipped = skipped;
+            _query = query;
         }
 
         public System.Data.DataTable Table
@@ -37,9 +42,14 @@ namespace dax.Db
             get { return true; }
         }
 
+        public bool IsSkipped
+        {
+            get { return _skipped; }
+        }
+
         public string QueryText
         {
-            get { return "[Query skipped]"; }
+            get { return _query; }
         }
 
         public long ElapsedTime
@@ -77,6 +87,11 @@ namespace dax.Db
         private static Task CreateDummyTask()
         {
             return Task.Factory.StartNew(() => { });
+        }
+
+        public static DummyQueryBlock Make(String query)
+        {
+            return new DummyQueryBlock(false, query);
         }
     }
 }

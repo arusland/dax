@@ -45,9 +45,13 @@ namespace dax.Gui
             _queryBlock = queryBlock;
             _notificationView = notificationView;
 
-            if (queryBlock.IsEmpty)
+            if (queryBlock.IsSkipped)
             {
                 IsSelected = false;
+            }
+
+            if (queryBlock.IsEmpty)
+            {
                 gridTable.Visibility = Visibility.Collapsed;
                 stackPanelControl.Visibility = Visibility.Collapsed;
             }

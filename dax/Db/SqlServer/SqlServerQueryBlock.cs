@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace dax.Db.SqlServer
 {
-    class SqlServerQueryBlock : IQueryBlock
+    public class SqlServerQueryBlock : IQueryBlock
     {
         private readonly String _query;
         private readonly string _connectionString;
@@ -43,6 +43,11 @@ namespace dax.Db.SqlServer
         public bool IsEmpty
         {
             get { return Table == null || Table.Rows.Count == 0; }
+        }
+
+        public bool IsSkipped
+        {
+            get { return false; }
         }
 
         public int PageSize

@@ -194,7 +194,7 @@ namespace dax.Gui
                 List<Block> deselectedBlocks = CurrentTab.DeselectedBlocks;
 
                 var inputValues = inputs.ToDictionary(p => p.InputName, p => p.InputValue);
-                _daxManager.SearchAsync(inputValues, b => BlockFilter(b, _currentGroup, deselectedBlocks));
+                _daxManager.SearchAsync(inputValues, b => AllowBlockFilter(b, _currentGroup, deselectedBlocks));
             }
         }
 
@@ -206,7 +206,7 @@ namespace dax.Gui
             }
         }
 
-        private bool BlockFilter(Block target, Group currentGroup, List<Block> deselectedBlocks)
+        private bool AllowBlockFilter(Block target, Group currentGroup, List<Block> deselectedBlocks)
         {
             return (deselectedBlocks.Count == 0 || deselectedBlocks.All(p => p.Order != target.Order))
                 && (currentGroup.IsAll || target.HasGroup(currentGroup));
