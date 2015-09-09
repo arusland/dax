@@ -15,8 +15,8 @@
  */
 
 using dax.Db;
-using dax.Extensions;
 using dax.Db.Connect;
+using dax.Extensions;
 using System;
 using System.Windows;
 
@@ -66,17 +66,21 @@ namespace dax.Gui
 
             buttonTest.IsEnabled = false;
             var task = connection.Test();
-            task.ContinueWith(p =>
-            {
-                buttonTest.IsEnabled = true;
 
-                if (String.IsNullOrWhiteSpace(task.Result))
+            task.GetAwaiter().OnCompleted(() =>
+            {
+                if (this.IsActive)
                 {
-                    _notificationView.ShowMessage("Connection is OK!");
-                }
-                else
-                {
-                    _notificationView.ShowWarning(task.Result);
+                    buttonTest.IsEnabled = true;
+
+                    if (String.IsNullOrWhiteSpace(task.Result))
+                    {
+                        _notificationView.ShowMessage("Connection is OK!");
+                    }
+                    else
+                    {
+                        _notificationView.ShowWarning(task.Result);
+                    }
                 }
             });
         }
